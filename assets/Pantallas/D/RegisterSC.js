@@ -3,7 +3,7 @@ import { Button, TextInput, IconButton } from 'react-native-paper';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { auth, db } from '../../Resources/firebaseConfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 
 function RegisterSC() {
@@ -23,11 +23,23 @@ function RegisterSC() {
         }
 
         try {
+            // 1️⃣ Crear usuario
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
+
+            // 2️⃣ Enviar email de verificación
+            await sendEmailVerification(user);
+
+            // 3️⃣ Guardar nombre y correo en Firestore
+            await setDoc(doc(db, "users", user.uid), {
+                name: name,
+                email: email,
+            });
+
+            // 4️⃣ Alerta de éxito
             Alert.alert(
                 "Registro exitoso",
-                "Tu cuenta ha sido creada correctamente",
+                "Tu cuenta ha sido creada correctamente. Revisa tu correo para verificar tu cuenta.",
                 [
                     {
                         text: "OK",
@@ -36,13 +48,7 @@ function RegisterSC() {
                 ],
                 { cancelable: false }
             );
-            // Guardar nombre y correo en Firestore
-            await setDoc(doc(db, "users", user.uid), {
-                name: name,
-                email: email,
-            });
 
-            // Mostrar alerta de éxito con retraso para asegurar renderizado
         } catch (error) {
             let mensaje = "";
             switch (error.code) {
@@ -56,7 +62,7 @@ function RegisterSC() {
                     mensaje = "La contraseña debe tener al menos 6 caracteres";
                     break;
                 case 'auth/missing-password':
-                    mensaje = "Ingresa una contraseña"
+                    mensaje = "Ingresa una contraseña";
                     break;
                 default:
                     mensaje = error.message;

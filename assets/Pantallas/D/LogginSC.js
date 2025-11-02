@@ -2,7 +2,7 @@ import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Text, Alert } fro
 import { Button, TextInput, IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { auth } from '../../Resources/firebaseConfig'; // Asegúrate que esta ruta sea correcta
 
 function LogginSC() {
@@ -21,8 +21,21 @@ function LogginSC() {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            Keyboard.dismiss();
+            // Refresca el usuario desde Firebase para obtener el estado más reciente
+            await user.reload();
 
+            if (!user.emailVerified) {
+                // Reenviar correo de verificación si el usuario no está verificado
+                await sendEmailVerification(user);
+                Alert.alert(
+                    "Correo no verificado",
+                    "Debes verificar tu correo antes de iniciar sesión. Se ha reenviado el correo de verificación."
+                );
+                return; // Bloquea el login
+            }
+
+            // Si el correo está verificado, continúa el login
+            Keyboard.dismiss();
             setTimeout(() => {
                 Alert.alert(
                     "Bienvenido",
@@ -39,6 +52,7 @@ function LogginSC() {
                     { cancelable: false }
                 );
             }, 50);
+
         } catch (error) {
             let mensaje = "";
             switch (error.code) {
@@ -46,13 +60,11 @@ function LogginSC() {
                     mensaje = "Correo electrónico inválido";
                     break;
                 case 'auth/user-not-found':
-                    mensaje = "Ocurrió un error con el correo electrónico o la contraseña";
-                    break;
                 case 'auth/wrong-password':
-                    mensaje = "Ocurrió un error con el correo electrónico o la contraseña";
+                    mensaje = "Correo o contraseña incorrectos";
                     break;
                 default:
-                    mensaje = "Ocurrió un error al iniciar sesión";
+                    mensaje = "Ocurrió un error al iniciar sesión o aún no verificas tu cuenta";
             }
             Alert.alert("Error", mensaje);
         }
