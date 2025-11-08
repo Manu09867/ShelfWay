@@ -8,11 +8,11 @@ import MainForm from './assets/Pantallas/D/MainformSC';
 import LoginScreen from './assets/Pantallas/D/LogginSC';
 import RegisterScreen from './assets/Pantallas/D/RegisterSC';
 import ProductsScreen from './assets/Pantallas/D/ProductSC';
-import ConfigScreen from './assets/Pantallas/D/ConfigScreen';
-import AvisosScreen from './assets/Pantallas/D/AvisosScreen';
-import Aviso1Screen from './assets/Pantallas/D/Aviso1Screen';
-import Aviso2Screen from './assets/Pantallas/D/Aviso2Screen';
-import OfertasScreen from './assets/Pantallas/D/OfertasSC';
+import ConfigScreen from './assets/Pantallas/M/ConfigScreen';
+import AvisosScreen from './assets/Pantallas/M/AvisosScreen';
+import Aviso1Screen from './assets/Pantallas/M/Aviso1Screen';
+import Aviso2Screen from './assets/Pantallas/M/Aviso2Screen';
+import OfertasScreen from './assets/Pantallas/M/OfertasSC';
 const Stack = createNativeStackNavigator();
 
 export default function App() {

@@ -7,8 +7,8 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import TutorialDialog from './TutorialSC';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import ConfigScreen from './ConfigScreen';
-import OfertasScreen from './OfertasSC'; // Importa OfertasScreen
+import ConfigScreen from '../M/ConfigScreen';
+import OfertasScreen from '../M/OfertasSC'; 
 
 function MainScreen() {
     const [searchQuery, setSearchQuery] = React.useState('');
