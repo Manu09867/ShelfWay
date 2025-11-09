@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
         elevation: 6,
     },
     bottomNav: {
-        // Quitamos position: 'absolute' para que el BottomNavigation maneje el layout correctamente
+      
     },
     permissionContainer: {
         flex: 1,

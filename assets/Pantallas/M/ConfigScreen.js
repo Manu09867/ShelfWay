@@ -42,7 +42,7 @@ const ConfigScreen = () => {
                 <Button
                     icon="alert-circle-outline"
                     mode="contained"
-                    onPress={() => console.log('Reporte pressed')}
+                    onPress={() => navigation.navigate('Reporte')}
                     style={[styles.button, isLandscape && styles.buttonLandscape]}
                     contentStyle={styles.buttonContent}
                 >
@@ -52,7 +52,7 @@ const ConfigScreen = () => {
                 <Button
                     icon="palette-outline"
                     mode="contained"
-                    onPress={() => console.log('Personalización pressed')}
+                    onPress={() => navigation.navigate('Personalizacion')}
                     style={[styles.button, isLandscape && styles.buttonLandscape]}
                     contentStyle={styles.buttonContent}
                 >
