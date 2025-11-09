@@ -8,7 +8,7 @@ import TutorialDialog from './TutorialSC';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import ConfigScreen from '../M/ConfigScreen';
-import OfertasScreen from '../M/OfertasSC'; 
+import OfertasScreen from '../M/OfertasSC';
 
 function MainScreen() {
     const [searchQuery, setSearchQuery] = React.useState('');
@@ -62,9 +62,19 @@ function MainScreen() {
                 <Text style={[styles.infoText, { color: theme.colors.text }]}>
                     Escanea un QR o código de barras
                 </Text>
+                
                 <View style={styles.cameraV}>
                     <CameraView style={StyleSheet.absoluteFillObject} />
                 </View>
+
+                {/* Botón para simular código QR */}
+                <Button
+                    mode="contained"
+                    onPress={() => navigation.navigate('Mapa')}
+                    style={{ alignSelf: 'center', marginTop: 20 }}
+                >
+                    Simulación de código QR
+                </Button>
             </View>
         </View>
     );
@@ -174,7 +184,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingBottom: 40,
-        marginTop: '-60%',
+        marginTop: '-10%',
     },
     cameraV: {
         width: 320,
