@@ -14,13 +14,14 @@ function MainScreen() {
     const [searchQuery, setSearchQuery] = React.useState('');
     const [index, setIndex] = React.useState(1);
     const [showTutorial, setShowTutorial] = React.useState(false);
+
     const [routes] = React.useState([
         { key: 'ofertas', title: 'Ofertas', icon: 'tag-outline' },
         { key: 'mapa', title: 'Mapa', icon: 'map-marker-outline' },
         { key: 'config', title: 'Configuración', icon: 'cog-outline' },
     ]);
 
-    const { theme, toggleThemeType, isDarkTheme } = useTheme();
+    const { theme } = useTheme();
     const [permission, requestPermission] = useCameraPermissions();
     const navigation = useNavigation();
 
@@ -28,69 +29,6 @@ function MainScreen() {
         if (!permission) return;
         if (!permission.granted) requestPermission();
     }, [permission]);
-
-    // Función para la pantalla principal con cámara
-    const MainCameraScreen = () => (
-        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-            {/* Botón modo oscuro / claro */}
-            <Button
-                mode="contained-tonal"
-                onPress={toggleThemeType}
-                style={{ alignSelf: 'center', marginBottom: 10 }}
-            >
-                {isDarkTheme ? '☀️ Modo claro' : '🌙 Modo oscuro'}
-            </Button>
-
-            {/* Barra de búsqueda */}
-            <Searchbar
-                placeholder="Buscar"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholderTextColor={theme.colors.placeholder}
-                inputStyle={{ color: theme.colors.text }}
-                style={[styles.searchbar, { backgroundColor: theme.colors.surface }]}
-                iconColor={theme.colors.primary}
-                onSubmitEditing={() => {
-                    if (searchQuery.trim() !== '') {
-                        navigation.navigate('Products', { query: searchQuery });
-                    }
-                }}
-            />
-
-            {/* Cámara y texto */}
-            <View style={styles.cameraWrapper}>
-                <Text style={[styles.infoText, { color: theme.colors.text }]}>
-                    Escanea un QR o código de barras
-                </Text>
-                
-                <View style={styles.cameraV}>
-                    <CameraView style={StyleSheet.absoluteFillObject} />
-                </View>
-
-                {/* Botón para simular código QR */}
-                <Button
-                    mode="contained"
-                    onPress={() => navigation.navigate('Mapa')}
-                    style={{ alignSelf: 'center', marginTop: 20 }}
-                >
-                    Simulación de código QR
-                </Button>
-            </View>
-        </View>
-    );
-
-    // Función para renderizar cada pantalla según la pestaña seleccionada
-    const renderScene = ({ route }) => {
-        switch (route.key) {
-            case 'ofertas':
-                return <OfertasScreen />; // Ahora muestra OfertasScreen
-            case 'config':
-                return <ConfigScreen />;
-            case 'mapa':
-            default:
-                return <MainCameraScreen />;
-        }
-    };
 
     if (!permission) {
         return (
@@ -108,23 +46,65 @@ function MainScreen() {
         );
     }
 
-    return (
-        <View style={{ flex: 1 }}>
-            <StatusBar
-                style={isDarkTheme ? 'light' : 'dark'}
-                backgroundColor={theme.colors.background}
-                translucent={false}
+    // 🔹 Mantener tu escena principal original
+    const renderMapa = () => (
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+            <Searchbar
+                placeholder="Buscar"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholderTextColor={theme.colors.placeholder}
+                inputStyle={{ color: theme.colors.text }}
+                style={[styles.searchbar, { backgroundColor: theme.colors.surface }]}
+                iconColor={theme.colors.primary}
             />
 
-            {/* Botón flotante de ayuda - solo mostrar en pantalla de mapa */}
-            {index === 1 && ( // Solo mostrar en Mapa (índice 1)
-                <FAB
-                    icon="help-circle-outline"
-                    style={[styles.fab, { backgroundColor: theme.colors.primary }]}
-                    color={theme.colors.onPrimary}
-                    onPress={() => setShowTutorial(true)}
-                />
-            )}
+            <View style={styles.cameraWrapper}>
+                <Text style={[styles.infoText, { color: theme.colors.text }]}>
+                    Escanea un QR o código de barras
+                </Text>
+                <View style={styles.cameraV}>
+                    <CameraView style={StyleSheet.absoluteFillObject} />
+                </View>
+
+                <Button
+                    mode="contained"
+                    onPress={() => navigation.navigate('Mapa')}
+                    style={{ alignSelf: 'center', marginTop: 20 }}
+                >
+                    Simulación de código QR
+                </Button>
+            </View>
+        </View>
+    );
+
+    // 🔹 Control para renderizar la vista según la pestaña activa
+    const renderScene = () => {
+        switch (routes[index].key) {
+            case 'ofertas':
+                return <OfertasScreen />;
+            case 'config':
+                return <ConfigScreen />;
+            case 'mapa':
+            default:
+                return renderMapa();
+        }
+    };
+
+    return (
+        <View style={{ flex: 1 }}>
+            {/* Contenido principal (mantiene tu cámara y buscador) */}
+            <View style={{ flex: 1 }}>
+                {renderScene()}
+            </View>
+
+            {/* Botón flotante de ayuda */}
+            <FAB
+                icon="help-circle-outline"
+                style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+                color={theme.colors.onPrimary}
+                onPress={() => setShowTutorial(true)}
+            />
 
             {/* Dialog del tutorial */}
             <TutorialDialog
@@ -136,7 +116,7 @@ function MainScreen() {
             <BottomNavigation
                 navigationState={{ index, routes }}
                 onIndexChange={setIndex}
-                renderScene={renderScene}
+                renderScene={() => null} // no renderiza escenas internas
                 barStyle={{ backgroundColor: theme.colors.menuBg }}
                 activeColor={theme.colors.btIcon}
                 inactiveColor={theme.colors.btIconIn}
@@ -156,11 +136,12 @@ function MainScreen() {
 
 export default function App() {
     return (
-        <MainScreen />
+        <ThemeContextProvider>
+            <MainScreen />
+        </ThemeContextProvider>
     );
 }
 
-// Tus estilos permanecen igual...
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -184,7 +165,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingBottom: 40,
-        marginTop: '-10%',
+        marginTop: '-60%',
     },
     cameraV: {
         width: 320,
@@ -202,7 +183,10 @@ const styles = StyleSheet.create({
         elevation: 6,
     },
     bottomNav: {
-      
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
     },
     permissionContainer: {
         flex: 1,
