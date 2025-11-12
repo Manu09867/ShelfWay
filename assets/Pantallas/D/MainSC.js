@@ -81,6 +81,14 @@ function MainScreen() {
                 <View style={styles.cameraV}>
                     <CameraView style={StyleSheet.absoluteFillObject} />
                 </View>
+                
+                <Button
+                    mode="contained"
+                    onPress={() => navigation.navigate('Mapa')}
+                    style={{ alignSelf: 'center', marginTop: 20 }}
+                >
+                    Simulación de código QR
+                </Button>
             </View>
         </View>
     );
