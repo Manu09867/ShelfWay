@@ -7,23 +7,25 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import TutorialDialog from './TutorialSC';
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import { useTranslation } from 'react-i18next';
 import ConfigScreen from '../M/ConfigScreen';
 import OfertasScreen from '../M/OfertasSC';
 
 function MainScreen() {
+    const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = React.useState('');
     const [index, setIndex] = React.useState(1);
     const [showTutorial, setShowTutorial] = React.useState(false);
 
-    const [routes] = React.useState([
-        { key: 'ofertas', title: 'Ofertas', icon: 'tag-outline' },
-        { key: 'mapa', title: 'Mapa', icon: 'map-marker-outline' },
-        { key: 'config', title: 'Configuración', icon: 'cog-outline' },
-    ]);
-
-    const { theme } = useTheme();
+    const { theme, toggleThemeType, isDarkTheme } = useTheme();
     const [permission, requestPermission] = useCameraPermissions();
     const navigation = useNavigation();
+
+    const [routes] = React.useState([
+        { key: 'ofertas', title: t('mainScreen.bottomNav.offers'), icon: 'tag-outline' },
+        { key: 'mapa', title: t('mainScreen.bottomNav.map'), icon: 'map-marker-outline' },
+        { key: 'config', title: t('mainScreen.bottomNav.settings'), icon: 'cog-outline' },
+    ]);
 
     React.useEffect(() => {
         if (!permission) return;
@@ -33,7 +35,7 @@ function MainScreen() {
     if (!permission) {
         return (
             <View style={styles.permissionContainer}>
-                <Text style={styles.permissionText}>Solicitando permiso de cámara...</Text>
+                <Text style={styles.permissionText}>{t('mainScreen.camera.requestingPermission')}</Text>
             </View>
         );
     }
@@ -41,16 +43,24 @@ function MainScreen() {
     if (!permission.granted) {
         return (
             <View style={styles.permissionContainer}>
-                <Text style={styles.permissionText}>No se concedió el permiso de cámara.</Text>
+                <Text style={styles.permissionText}>{t('mainScreen.camera.denied')}</Text>
             </View>
         );
     }
 
-    // 🔹 Mantener tu escena principal original
+    // Escena de cámara y buscador (pestaña "mapa")
     const renderMapa = () => (
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+            <Button
+                mode="contained-tonal"
+                onPress={toggleThemeType}
+                style={{ alignSelf: 'center', marginBottom: 10 }}
+            >
+                {isDarkTheme ? t('mainScreen.theme.lightMode') : t('mainScreen.theme.darkMode')}
+            </Button>
+
             <Searchbar
-                placeholder="Buscar"
+                placeholder={t('mainScreen.searchPlaceholder')}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 placeholderTextColor={theme.colors.placeholder}
@@ -66,24 +76,16 @@ function MainScreen() {
 
             <View style={styles.cameraWrapper}>
                 <Text style={[styles.infoText, { color: theme.colors.text }]}>
-                    Escanea un QR o código de barras
+                    {t('mainScreen.scanInfo')}
                 </Text>
                 <View style={styles.cameraV}>
                     <CameraView style={StyleSheet.absoluteFillObject} />
                 </View>
-
-                <Button
-                    mode="contained"
-                    onPress={() => navigation.navigate('Mapa')}
-                    style={{ alignSelf: 'center', marginTop: 20 }}
-                >
-                    Simulación de código QR
-                </Button>
             </View>
         </View>
     );
 
-    // 🔹 Control para renderizar la vista según la pestaña activa
+    // Renderiza la escena según la pestaña activa
     const renderScene = () => {
         switch (routes[index].key) {
             case 'ofertas':
@@ -98,10 +100,8 @@ function MainScreen() {
 
     return (
         <View style={{ flex: 1 }}>
-            {/* Contenido principal (mantiene tu cámara y buscador) */}
-            <View style={{ flex: 1 }}>
-                {renderScene()}
-            </View>
+            {/* Contenido principal */}
+            <View style={{ flex: 1 }}>{renderScene()}</View>
 
             {/* Botón flotante de ayuda */}
             <FAB
@@ -121,7 +121,7 @@ function MainScreen() {
             <BottomNavigation
                 navigationState={{ index, routes }}
                 onIndexChange={setIndex}
-                renderScene={() => null} // no renderiza escenas internas
+                renderScene={() => null} // dejamos que renderScene se maneje manualmente
                 barStyle={{ backgroundColor: theme.colors.menuBg }}
                 activeColor={theme.colors.btIcon}
                 inactiveColor={theme.colors.btIconIn}
@@ -140,11 +140,7 @@ function MainScreen() {
 }
 
 export default function App() {
-    return (
-        <ThemeContextProvider>
-            <MainScreen />
-        </ThemeContextProvider>
-    );
+    return <MainScreen />;
 }
 
 const styles = StyleSheet.create({

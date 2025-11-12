@@ -5,8 +5,10 @@ import { useNavigation } from '@react-navigation/native';
 import { auth, db } from '../../Resources/firebaseConfig';
 import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
+import { useTranslation } from 'react-i18next';
 
 function RegisterSC() {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -18,31 +20,31 @@ function RegisterSC() {
 
     const handleRegister = async () => {
         if (password !== confirmPassword) {
-            Alert.alert("Error", "Las contraseñas no coinciden");
+            Alert.alert(t('register.alert.error'), t('register.passwordMismatch'));
             return;
         }
 
         try {
-            // 1️⃣ Crear usuario
+            // Crear usuario
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // 2️⃣ Enviar email de verificación
+            // Enviar email de verificación
             await sendEmailVerification(user);
 
-            // 3️⃣ Guardar nombre y correo en Firestore
+            // Guardar nombre y correo en Firestore
             await setDoc(doc(db, "users", user.uid), {
                 name: name,
                 email: email,
             });
 
-            // 4️⃣ Alerta de éxito
+            // Alerta de éxito
             Alert.alert(
-                "Registro exitoso",
-                "Tu cuenta ha sido creada correctamente. Revisa tu correo para verificar tu cuenta.",
+                t('register.alert.successTitle'),
+                t('register.alert.successMessage'),
                 [
                     {
-                        text: "OK",
+                        text: t('register.alert.ok'),
                         onPress: () => navigation.goBack(),
                     },
                 ],
@@ -53,24 +55,23 @@ function RegisterSC() {
             let mensaje = "";
             switch (error.code) {
                 case 'auth/email-already-in-use':
-                    mensaje = "El correo ya está registrado";
+                    mensaje = t('register.alert.emailInUse');
                     break;
                 case 'auth/invalid-email':
-                    mensaje = "Correo electrónico inválido";
+                    mensaje = t('register.alert.invalidEmail');
                     break;
                 case 'auth/weak-password':
-                    mensaje = "La contraseña debe tener al menos 6 caracteres";
+                    mensaje = t('register.alert.weakPassword');
                     break;
                 case 'auth/missing-password':
-                    mensaje = "Ingresa una contraseña";
+                    mensaje = t('register.alert.missingPassword');
                     break;
                 default:
                     mensaje = error.message;
             }
-            Alert.alert("Error", mensaje);
+            Alert.alert(t('register.alert.error'), mensaje);
         }
     };
-
 
     return (
         <KeyboardAvoidingView
@@ -82,31 +83,31 @@ function RegisterSC() {
                     <View style={[styles.container, { backgroundColor: '#fff' }]}>
                         <IconButton icon="arrow-left" size={28} onPress={() => navigation.goBack()} style={styles.backButton} />
 
-                        <Text style={styles.text}>¡Bienvenido!</Text>
+                        <Text style={styles.text}>{t('register.welcome')}</Text>
 
-                        <Text style={styles.text2}>Correo Electrónico</Text>
+                        <Text style={styles.text2}>{t('register.emailLabel')}</Text>
                         <TextInput
                             mode='outlined'
-                            label="Correo Electrónico"
+                            label={t('register.emailLabel')}
                             style={styles.input}
                             outlineColor="#26A69A"
                             value={email}
                             onChangeText={setEmail}
                         />
 
-                        <Text style={styles.text2}>Nombre</Text>
+                        <Text style={styles.text2}>{t('register.nameLabel')}</Text>
                         <TextInput
                             mode='outlined'
-                            label="Nombre"
+                            label={t('register.nameLabel')}
                             style={styles.input}
                             outlineColor="#26A69A"
                             value={name}
                             onChangeText={setName}
                         />
 
-                        <Text style={styles.text2}>Contraseña</Text>
+                        <Text style={styles.text2}>{t('register.passwordLabel')}</Text>
                         <TextInput
-                            label="Contraseña"
+                            label={t('register.passwordLabel')}
                             mode="outlined"
                             style={styles.input}
                             outlineColor="#26A69A"
@@ -121,9 +122,9 @@ function RegisterSC() {
                             }
                         />
 
-                        <Text style={styles.text2}>Confirmar Contraseña</Text>
+                        <Text style={styles.text2}>{t('register.confirmPasswordLabel')}</Text>
                         <TextInput
-                            label="Confirmar Contraseña"
+                            label={t('register.confirmPasswordLabel')}
                             mode="outlined"
                             style={styles.input}
                             outlineColor={passwordsMatch ? "#26A69A" : "#D32F2F"}
@@ -139,7 +140,7 @@ function RegisterSC() {
                         />
                         {!passwordsMatch && (
                             <Text style={{ color: '#D32F2F', marginBottom: 10, marginLeft: 45, alignSelf: 'flex-start' }}>
-                                Las contraseñas no coinciden
+                                {t('register.passwordMismatch')}
                             </Text>
                         )}
 
@@ -149,7 +150,7 @@ function RegisterSC() {
                             labelStyle={{ fontSize: 18 }}
                             onPress={handleRegister}
                         >
-                            Registrarse
+                            {t('register.registerButton')}
                         </Button>
                     </View>
                 </TouchableWithoutFeedback>
