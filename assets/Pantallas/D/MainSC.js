@@ -57,6 +57,11 @@ function MainScreen() {
                 inputStyle={{ color: theme.colors.text }}
                 style={[styles.searchbar, { backgroundColor: theme.colors.surface }]}
                 iconColor={theme.colors.primary}
+                onSubmitEditing={() => {
+                    if (searchQuery.trim() !== '') {
+                        navigation.navigate('Products', { query: searchQuery });
+                    }
+                }}
             />
 
             <View style={styles.cameraWrapper}>
