@@ -30,6 +30,9 @@
         "emailLabel": "Email",
         "passwordLabel": "Password",
         "loginButton": "Login",
+        "forgotPassword": "Password Recovery",
+        "cancel": "Cancel",
+        "send": "Send",
         "alert": {
             "error": "Error",
             "emptyFields": "Please enter your email and password",
@@ -40,12 +43,15 @@
             "continue": "Continue",
             "invalidEmail": "Invalid email address",
             "wrongCredentials": "Email or password is incorrect",
-            "otherError": "An error occurred while logging in or you have not verified your account"
+            "otherError": "An error occurred while logging in or you have not verified your account",
+            "resetEmailGeneric": "If an account exists, a password recovery email has been sent",
+            "success": "Success"
         }
     },
     "mainScreen": {
         "searchPlaceholder": "Search",
         "scanInfo": "Scan a QR or barcode",
+        "mapB": "Return to the map",
         "camera": {
             "requestingPermission": "Requesting camera permission...",
             "denied": "Camera permission denied."
@@ -64,7 +70,9 @@
         "noShelf": "Not specified",
         "offer": "Offer",
         "before": "Before",
-        "price": "Price"
+        "price": "Price",
+        "inStock": "In Stock",
+        "outOfStock": "Out of Stock"
     },
     "common": {
         "close": "Close"

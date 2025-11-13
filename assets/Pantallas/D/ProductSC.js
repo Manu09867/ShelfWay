@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
-import { Text, Card, ActivityIndicator, Dialog, Portal, Button } from 'react-native-paper';
+import { Text, Card, ActivityIndicator, Dialog, Portal, Button, IconButton } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../Resources/firebaseConfig';
 import { useTheme } from '../../Resources/ThemeProvider';
@@ -11,14 +12,16 @@ import { useTranslation } from 'react-i18next';
 
 export default function ProductsScreen({ route }) {
     const { theme, isDarkTheme } = useTheme();
-    const { query: searchQuery } = route.params;
+    const { query: searchQuery, barcode } = route.params || {};
     const { i18n, t } = useTranslation();
     const currentLang = i18n.language || 'es';
-
     const [products, setProducts] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const colors = theme.colors;
+    const navigation = useNavigation();
+
+
 
     useFocusEffect(
         React.useCallback(() => {
@@ -45,27 +48,33 @@ export default function ProductsScreen({ route }) {
                     const data = doc.data();
                     return {
                         id: doc.id,
-                        nombre:
-                            data.nombre?.[currentLang] ||
-                            data.nombre?.es ||
-                            '',
-                        descripcion:
-                            data.descripcion?.[currentLang] ||
-                            data.descripcion?.es ||
-                            '',
-                        tags:
-                            data.tags?.[currentLang] ||
-                            data.tags?.es ||
-                            [],
+                        codigoBarras: data.codigoBarras || '',
+                        nombre: data.nombre?.[currentLang] || data.nombre?.es || '',
+                        descripcion: data.descripcion?.[currentLang] || data.descripcion?.es || '',
+                        tags: data.tags?.[currentLang] || data.tags?.es || [],
                         price: data.precio || 0,
                         priceOffer: data.precioOferta || 0,
                         image: data.imagen?.url || null,
                         anaquel: data.anaquel || '',
                         oferta: data.oferta || false,
+                        stock: data.stock ?? true,
                     };
                 });
 
-                const queryLower = searchQuery.toLowerCase();
+                // 🔍 Escaneo por código de barras
+                if (barcode) {
+                    const product = allProducts.find(p => p.codigoBarras === barcode);
+                    if (product) {
+                        setSelectedProduct(product); // Abre el diálogo automáticamente
+                        setProducts([product]);
+                    } else {
+                        setProducts([]);
+                    }
+                    return; // No seguimos al filtrado por texto
+                }
+
+                // 🔍 Búsqueda por texto
+                const queryLower = (searchQuery || '').toLowerCase();
                 const filtered = allProducts.filter(
                     p =>
                         normalize(p.nombre).includes(queryLower) ||
@@ -82,7 +91,8 @@ export default function ProductsScreen({ route }) {
         };
 
         fetchProducts();
-    }, [searchQuery, currentLang]);
+    }, [searchQuery, currentLang, barcode]);
+
 
     const hasOffer = product =>
         typeof product?.priceOffer === 'number' && product.priceOffer > 0;
@@ -108,11 +118,14 @@ export default function ProductsScreen({ route }) {
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
             <StatusBar style={isDarkTheme ? 'light' : 'dark'} backgroundColor={theme.colors.background} />
+            <View style={styles.header}>
+                <IconButton icon="arrow-left" size={28} onPress={() => navigation.goBack()} />
+            </View>
 
             <FlatList
                 data={products}
                 keyExtractor={item => item.id}
-                contentContainerStyle={{ padding: 10 }}
+                contentContainerStyle={{ padding: 5 }}
                 renderItem={({ item }) => (
                     <Card style={[styles.card, { backgroundColor: colors.surface }]}>
                         <View style={styles.cardContent}>
@@ -126,6 +139,7 @@ export default function ProductsScreen({ route }) {
                                     {item.nombre}
                                 </Text>
 
+
                                 <View style={styles.priceRow}>
                                     {hasOffer(item) ? (
                                         <>
@@ -138,6 +152,15 @@ export default function ProductsScreen({ route }) {
                                         </Text>
                                     )}
                                 </View>
+                                <Text
+                                    style={[
+                                        styles.stockText,
+                                        { color: item.stock ? 'green' : 'red' },
+                                    ]}
+                                >
+                                    {item.stock ? t('productsScreen.inStock') : t('productsScreen.outOfStock')}
+                                </Text>
+
                             </View>
 
                             <TouchableOpacity
@@ -182,6 +205,12 @@ export default function ProductsScreen({ route }) {
                                         {t('productsScreen.price')}: ${Number(selectedProduct.price).toFixed(2)}
                                     </Text>
                                 )}
+                                <Text style={[styles.dialogText, { color: selectedProduct.stock ? 'green' : 'red' }]}>
+                                    {selectedProduct.stock
+                                        ? t('productsScreen.inStock')
+                                        : t('productsScreen.outOfStock')}
+                                </Text>
+
                             </Dialog.Content>
                             <Dialog.Actions>
                                 <Button onPress={() => setSelectedProduct(null)}>
@@ -199,7 +228,7 @@ export default function ProductsScreen({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 60,
+        paddingTop: 20,
     },
     card: {
         borderRadius: 12,
@@ -292,4 +321,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    backButton: {
+        position: 'absolute',
+        top: 50,
+        left: 20,
+        zIndex: 10,
+        backgroundColor: 'transparent',
+    },
+    header: {
+        paddingTop: 30,
+        paddingHorizontal: 10,
+    },
+    stockText: {
+        fontSize: 15,
+        fontWeight: 'bold',
+        marginTop: 4,
+    },
+
+
 });

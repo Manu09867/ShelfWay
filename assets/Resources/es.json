@@ -30,6 +30,9 @@
         "emailLabel": "Correo Electrónico",
         "passwordLabel": "Contraseña",
         "loginButton": "Iniciar Sesión",
+        "forgotPassword": "Recuperar Contraseña",
+        "cancel": "Cancelar",
+        "send": "Enviar",
         "alert": {
             "error": "Error",
             "emptyFields": "Por favor, ingresa tu correo y contraseña",
@@ -40,12 +43,15 @@
             "continue": "Continuar",
             "invalidEmail": "Correo electrónico inválido",
             "wrongCredentials": "Correo o contraseña incorrectos",
-            "otherError": "Ocurrió un error al iniciar sesión o aún no verificas tu cuenta"
+            "otherError": "Ocurrió un error al iniciar sesión o aún no verificas tu cuenta",
+            "resetEmailGeneric": "En caso de existir la cuenta, se ha enviado un correo de recuperación",
+            "success": "Éxito"
         }
     },
     "mainScreen": {
         "searchPlaceholder": "Buscar",
         "scanInfo": "Escanea un QR o código de barras",
+        "mapB": "Regresar al mapa",
         "camera": {
             "requestingPermission": "Solicitando permiso de cámara...",
             "denied": "No se concedió el permiso de cámara."
@@ -64,7 +70,9 @@
         "noShelf": "No especificado",
         "offer": "Oferta",
         "before": "Antes",
-        "price": "Precio"
+        "price": "Precio",
+        "inStock": "Disponible",
+        "outOfStock": "Agotado"
     },
     "common": {
         "close": "Cerrar"

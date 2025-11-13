@@ -1,17 +1,25 @@
 import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, Text, Alert } from 'react-native';
-import { Button, TextInput, IconButton } from 'react-native-paper';
+import { Button, TextInput, IconButton, Portal, Dialog } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../Resources/firebaseConfig';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../../Resources/ThemeProvider';
+
 
 function LogginSC() {
     const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [visible, setVisible] = useState(false);
+    const [resetDialogVisible, setResetDialogVisible] = useState(false);
+    const [resetEmail, setResetEmail] = useState('');
     const navigation = useNavigation();
+    const { theme, isDarkTheme } = useTheme();
+    const colors = theme.colors;
+
+
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -22,7 +30,6 @@ function LogginSC() {
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-
             await user.reload();
 
             if (!user.emailVerified) {
@@ -69,6 +76,25 @@ function LogginSC() {
         }
     };
 
+    const handleResetPassword = async () => {
+        try {
+            await sendPasswordResetEmail(auth, resetEmail);
+            setResetDialogVisible(false);
+            Alert.alert(
+                t('loginScreen.alert.success'),
+                t('loginScreen.alert.resetEmailGeneric')
+            );
+            setResetEmail('');
+        } catch (error) {
+            setResetDialogVisible(false);
+            Alert.alert(
+                t('loginScreen.alert.success'),
+                t('loginScreen.alert.resetEmailGeneric')
+            );
+            setResetEmail('');
+        }
+    };
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={[styles.container, { backgroundColor: '#fff' }]}>
@@ -105,6 +131,14 @@ function LogginSC() {
                 />
 
                 <Button
+                    mode="text"
+                    onPress={() => setResetDialogVisible(true)}
+                    style={{ alignSelf: 'flex-end', marginRight: 45, marginTop: 5 }}
+                >
+                    {t('loginScreen.forgotPassword')}
+                </Button>
+
+                <Button
                     mode='contained'
                     style={styles.button}
                     labelStyle={{ fontSize: 18 }}
@@ -112,6 +146,29 @@ function LogginSC() {
                 >
                     {t('loginScreen.loginButton')}
                 </Button>
+
+                <Portal>
+                    <Dialog visible={resetDialogVisible} onDismiss={() => setResetDialogVisible(false)}
+                        style={{ backgroundColor: colors.surface }}>
+                        <Dialog.Title>{t('loginScreen.forgotPassword')}</Dialog.Title>
+                        <Dialog.Content>
+                            <TextInput
+                                label={t('loginScreen.emailLabel')}
+                                mode="outlined"
+                                value={resetEmail}
+                                onChangeText={setResetEmail}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                outlineColor="#26A69A"
+                                style={{ backgroundColor: '#fff' }}
+                            />
+                        </Dialog.Content>
+                        <Dialog.Actions>
+                            <Button onPress={() => setResetDialogVisible(false)}>{t('loginScreen.cancel')}</Button>
+                            <Button onPress={handleResetPassword}>{t('loginScreen.send')}</Button>
+                        </Dialog.Actions>
+                    </Dialog>
+                </Portal>
             </View>
         </TouchableWithoutFeedback>
     );
