@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Dimensions } from 'react-native'; // ⭐ Importar Dimensions
+import { StyleSheet, Dimensions } from 'react-native'; // Importar Dimensions
 import { Button, useTheme } from 'react-native-paper';
 
 export default function PersonalizacionButton({ title, iconName, onPress }) {
