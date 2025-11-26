@@ -1,0 +1,113 @@
+{
+    "appName": "ShelfWay",
+    "welcomeText": "Welcome to ShelfWay, where getting lost in shopping is a thing of the past!",
+    "login": "Login",
+    "registerB": "Register",
+    "skipLogin": "Skip login",
+    "selectLanguage": "Select language",
+    "register": {
+        "welcome": "Welcome!",
+        "emailLabel": "Email",
+        "nameLabel": "Name",
+        "passwordLabel": "Password",
+        "confirmPasswordLabel": "Confirm Password",
+        "passwordMismatch": "Passwords do not match",
+        "registerButton": "Register",
+        "alert": {
+            "error": "Error",
+            "passwordMismatch": "Passwords do not match",
+            "successTitle": "Registration Successful",
+            "successMessage": "Your account has been created successfully. Check your email to verify your account.",
+            "ok": "OK",
+            "emailInUse": "Email is already registered",
+            "invalidEmail": "Invalid email address",
+            "weakPassword": "Password must be at least 6 characters",
+            "missingPassword": "Enter a password"
+        }
+    },
+    "loginScreen": {
+        "welcome": "Welcome back!",
+        "emailLabel": "Email",
+        "passwordLabel": "Password",
+        "loginButton": "Login",
+        "forgotPassword": "Password Recovery",
+        "cancel": "Cancel",
+        "send": "Send",
+        "alert": {
+            "error": "Error",
+            "emptyFields": "Please enter your email and password",
+            "emailNotVerifiedTitle": "Email not verified",
+            "emailNotVerifiedMessage": "You must verify your email before logging in. Verification email has been resent.",
+            "welcomeTitle": "Welcome",
+            "welcomeMessage": "Login successful, welcome",
+            "continue": "Continue",
+            "invalidEmail": "Invalid email address",
+            "wrongCredentials": "Email or password is incorrect",
+            "otherError": "An error occurred while logging in or you have not verified your account",
+            "resetEmailGeneric": "If an account exists, a password recovery email has been sent",
+            "success": "Success"
+        }
+    },
+    "mainScreen": {
+        "searchPlaceholder": "Search",
+        "scanInfo": "Scan a QR or barcode",
+        "mapB": "Return to the map",
+        "camera": {
+            "requestingPermission": "Requesting camera permission...",
+            "denied": "Camera permission denied."
+        },
+        "bottomNav": {
+            "offers": "Offers",
+            "map": "Map",
+            "settings": "Settings"
+        }
+    },
+    "productsScreen": {
+        "noProducts": "No products found.",
+        "description": "Description",
+        "noDescription": "No description",
+        "shelf": "Shelf",
+        "noShelf": "Not specified",
+        "offer": "Offer",
+        "before": "Before",
+        "price": "Price",
+        "inStock": "In Stock",
+        "outOfStock": "Out of Stock"
+    },
+    "common": {
+        "close": "Close"
+    },
+    "tutorial": {
+        "steps": {
+            "welcome": {
+                "title": "Welcome!",
+                "text": "This is your main screen. Here you can access all features."
+            },
+            "qr": {
+                "title": "QR Scanner",
+                "text": "Scan a map QR to locate yourself or a product barcode for more details."
+            },
+            "search": {
+                "title": "Search",
+                "text": "Use the top bar to look up specific products."
+            },
+            "offers": {
+                "title": "Offers",
+                "text": "In the Offers section you'll find promotions on our products."
+            },
+            "map": {
+                "title": "Map",
+                "text": "Check where each product is located after scanning the map QR."
+            },
+            "settings": {
+                "title": "Settings",
+                "text": "Customize your app. You can review alerts or report issues."
+            }
+        },
+        "buttons": {
+            "previous": "Previous",
+            "next": "Next",
+            "finish": "Finish"
+        }
+    }
+}

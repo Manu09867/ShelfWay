@@ -23,7 +23,7 @@ import PersonalizacionScreen from './assets/Pantallas/C/Personalizacion';
 import PreferenciasScreen from './assets/Pantallas/C/Preferencias';
 import NotificacionesScreen from './assets/Pantallas/C/Notificaciones';
 import IdiomaScreen from './assets/Pantallas/C/Idioma';
-
+import './assets/Resources/languaje';
 
 const Stack = createNativeStackNavigator();
 

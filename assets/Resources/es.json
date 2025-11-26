@@ -1,0 +1,113 @@
+{
+    "appName": "ShelfWay",
+    "welcomeText": "Bienvenido a ShelfWay, donde perderte en las compras es cosa del pasado!",
+    "login": "Iniciar Sesión",
+    "registerB": "Registrarse",
+    "skipLogin": "Saltar login",
+    "selectLanguage": "Selecciona idioma",
+    "register": {
+        "welcome": "¡Bienvenido!",
+        "emailLabel": "Correo Electrónico",
+        "nameLabel": "Nombre",
+        "passwordLabel": "Contraseña",
+        "confirmPasswordLabel": "Confirmar Contraseña",
+        "passwordMismatch": "Las contraseñas no coinciden",
+        "registerButton": "Registrarse",
+        "alert": {
+            "error": "Error",
+            "passwordMismatch": "Las contraseñas no coinciden",
+            "successTitle": "Registro exitoso",
+            "successMessage": "Tu cuenta ha sido creada correctamente. Revisa tu correo para verificar tu cuenta.",
+            "ok": "OK",
+            "emailInUse": "El correo ya está registrado",
+            "invalidEmail": "Correo electrónico inválido",
+            "weakPassword": "La contraseña debe tener al menos 6 caracteres",
+            "missingPassword": "Ingresa una contraseña"
+        }
+    },
+    "loginScreen": {
+        "welcome": "¡Hola de nuevo!",
+        "emailLabel": "Correo Electrónico",
+        "passwordLabel": "Contraseña",
+        "loginButton": "Iniciar Sesión",
+        "forgotPassword": "Recuperar Contraseña",
+        "cancel": "Cancelar",
+        "send": "Enviar",
+        "alert": {
+            "error": "Error",
+            "emptyFields": "Por favor, ingresa tu correo y contraseña",
+            "emailNotVerifiedTitle": "Correo no verificado",
+            "emailNotVerifiedMessage": "Debes verificar tu correo antes de iniciar sesión. Se ha reenviado el correo de verificación.",
+            "welcomeTitle": "Bienvenido",
+            "welcomeMessage": "Inicio de sesión exitoso, Bienvenido",
+            "continue": "Continuar",
+            "invalidEmail": "Correo electrónico inválido",
+            "wrongCredentials": "Correo o contraseña incorrectos",
+            "otherError": "Ocurrió un error al iniciar sesión o aún no verificas tu cuenta",
+            "resetEmailGeneric": "En caso de existir la cuenta, se ha enviado un correo de recuperación",
+            "success": "Éxito"
+        }
+    },
+    "mainScreen": {
+        "searchPlaceholder": "Buscar",
+        "scanInfo": "Escanea un QR o código de barras",
+        "mapB": "Regresar al mapa",
+        "camera": {
+            "requestingPermission": "Solicitando permiso de cámara...",
+            "denied": "No se concedió el permiso de cámara."
+        },
+        "bottomNav": {
+            "offers": "Ofertas",
+            "map": "Mapa",
+            "settings": "Configuración"
+        }
+    },
+    "productsScreen": {
+        "noProducts": "No se encontraron productos.",
+        "description": "Descripción",
+        "noDescription": "Sin descripción",
+        "shelf": "Anaquel",
+        "noShelf": "No especificado",
+        "offer": "Oferta",
+        "before": "Antes",
+        "price": "Precio",
+        "inStock": "Disponible",
+        "outOfStock": "Agotado"
+    },
+    "common": {
+        "close": "Cerrar"
+    },
+    "tutorial": {
+        "steps": {
+            "welcome": {
+                "title": "¡Bienvenido!",
+                "text": "Esta es tu pantalla principal. Aquí podrás acceder a todas las funciones."
+            },
+            "qr": {
+                "title": "Escáner QR",
+                "text": "Escanea el QR del mapa para ubicarte o el código de barras de un producto para más información."
+            },
+            "search": {
+                "title": "Buscar",
+                "text": "Usa la barra superior para buscar productos específicos."
+            },
+            "offers": {
+                "title": "Ofertas",
+                "text": "En la sección Ofertas encontrarás promociones en nuestros productos."
+            },
+            "map": {
+                "title": "Mapa",
+                "text": "Consulta dónde se ubica cada producto tras escanear el QR del mapa."
+            },
+            "settings": {
+                "title": "Configuración",
+                "text": "Configura y personaliza la app. Puedes revisar alertas o reportar fallos."
+            }
+        },
+        "buttons": {
+            "previous": "Anterior",
+            "next": "Siguiente",
+            "finish": "Finalizar"
+        }
+    }
+}

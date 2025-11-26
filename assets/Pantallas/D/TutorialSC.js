@@ -1,36 +1,38 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Button, Dialog, Portal, Text } from 'react-native-paper';
-import { useTheme } from '../../Resources/ThemeProvider'; // Ajusta la ruta si es diferente
+import { useTheme } from '../../Resources/ThemeProvider';
+import { useTranslation } from 'react-i18next';
 
 export default function TutorialDialog({ visible, onDismiss }) {
   const [step, setStep] = React.useState(1);
-  const { theme } = useTheme(); // Obtenemos tema actual del contexto
+  const { theme } = useTheme();
+  const { t } = useTranslation(); 
 
   const steps = [
     {
-      title: '¡Bienvenido!',
-      text: 'Esta es tu pantalla principal. Aquí podrás acceder a todas las funciones.',
+      title: t('tutorial.steps.welcome.title'),
+      text: t('tutorial.steps.welcome.text'),
     },
     {
-      title: 'Escáner QR',
-      text: 'Escanea el QR del mapa para ubicarte o el código de barras de un producto para más información.',
+      title: t('tutorial.steps.qr.title'),
+      text: t('tutorial.steps.qr.text'),
     },
     {
-      title: 'Buscar',
-      text: 'Usa la barra superior para buscar productos específicos.',
+      title: t('tutorial.steps.search.title'),
+      text: t('tutorial.steps.search.text'),
     },
     {
-      title: 'Ofertas',
-      text: 'En la sección Ofertas encontrarás promociones en nuestros productos.',
+      title: t('tutorial.steps.offers.title'),
+      text: t('tutorial.steps.offers.text'),
     },
     {
-      title: 'Mapa',
-      text: 'Consulta dónde se ubica cada producto tras escanear el QR del mapa.',
+      title: t('tutorial.steps.map.title'),
+      text: t('tutorial.steps.map.text'),
     },
     {
-      title: 'Configuración',
-      text: 'Configura y personaliza la app. Puedes revisar alertas o reportar fallos.',
+      title: t('tutorial.steps.settings.title'),
+      text: t('tutorial.steps.settings.text'),
     },
   ];
 
@@ -76,7 +78,7 @@ export default function TutorialDialog({ visible, onDismiss }) {
               onPress={handlePrev}
               textColor={theme.colors.primary}
             >
-              Anterior
+              {t('tutorial.buttons.previous')}
             </Button>
           )}
           <Button
@@ -85,7 +87,9 @@ export default function TutorialDialog({ visible, onDismiss }) {
             buttonColor={theme.colors.primary}
             textColor={theme.colors.onPrimary}
           >
-            {step < steps.length ? 'Siguiente' : 'Finalizar'}
+            {step < steps.length
+              ? t('tutorial.buttons.next')
+              : t('tutorial.buttons.finish')}
           </Button>
         </Dialog.Actions>
       </Dialog>

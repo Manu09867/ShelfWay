@@ -1,18 +1,23 @@
 import * as React from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { Text, Chip, BottomNavigation } from 'react-native-paper';
+import { Text, Chip, BottomNavigation, ActivityIndicator } from 'react-native-paper';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '../../Resources/ThemeProvider';
 
-const MapaScreen = ({ navigation }) => {
+const MapaScreen = ({ navigation, route }) => {
+    const { theme } = useTheme();
     const [index, setIndex] = React.useState(1);
+    const [loading, setLoading] = React.useState(true);
+    const [loadError, setLoadError] = React.useState(false);
+
+    // Recibimos la URL pasada desde MainScreen
+    const mapUrl = route?.params?.mapUrl || null;
+
     const [routes] = React.useState([
         { key: 'ofertas', title: 'Ofertas', icon: 'tag-outline' },
         { key: 'mapa', title: 'Mapa', icon: 'map-marker-outline' },
         { key: 'config', title: 'Configuración', icon: 'cog-outline' },
     ]);
-
-    const { theme } = useTheme();
 
     const handleTabPress = (routeKey) => {
         setIndex(routes.findIndex(r => r.key === routeKey));
@@ -31,36 +36,59 @@ const MapaScreen = ({ navigation }) => {
                 >
                     <MaterialIcons name="arrow-back" size={24} color="white" />
                 </TouchableOpacity>
-                <Chip
-                    mode="contained"
-                    style={styles.chip}
-                    textStyle={styles.chipText}
-                >
+                <Chip mode="contained" style={styles.chip} textStyle={styles.chipText}>
                     Mapa del Supermercado
                 </Chip>
             </View>
 
-            {/* Mensaje superior */}
-            <Text style={[styles.message, { color: theme.colors.text }]}>
-                Presiona el mapa para ver ofertas
-            </Text>
+            {/* Contenido principal */}
+            <View style={styles.imageContainer}>
+                {mapUrl ? (
+                    <>
+                        {loading && !loadError && (
+                            <ActivityIndicator size="large" color={theme.colors.primary} />
+                        )}
 
-            {/* Imagen clickeable */}
-            <TouchableOpacity
-                onPress={() => navigation.navigate('AnaquelesOfertas')}
-                style={styles.imageContainer}
-                activeOpacity={0.8}
-            >
-                <Image
-                    source={{
-                        uri: 'https://247wallst.com/wp-content/uploads/2017/01/updated-walmart-floor-plan.jpg?tpid=371411&tv=link&tc=in_content',
-                    }}
-                    style={styles.mapImage}
-                    resizeMode="contain"
-                />
-            </TouchableOpacity>
+                        {loadError && (
+                            <Text style={[styles.message, { color: theme.colors.text, textAlign: 'center' }]}>
+                                Error al cargar la imagen. Verifica el QR.
+                            </Text>
+                        )}
 
-            {/* Barra inferior*/}
+                        {!loadError && (
+                            <TouchableOpacity
+                                onPress={() => navigation.navigate('AnaquelesOfertas')}
+                                activeOpacity={0.8}
+                            >
+                                <Image
+                                    key={mapUrl}
+                                    source={{ uri: mapUrl }}
+                                    style={styles.mapImage}
+                                    resizeMode="contain"
+                                    onLoad={() => setLoading(false)}
+                                    onError={() => {
+                                        setLoading(false);
+                                        setLoadError(true);
+                                        console.log('Error al cargar imagen:', mapUrl);
+                                    }}
+                                />
+                            </TouchableOpacity>
+                        )}
+
+                        {!loading && !loadError && (
+                            <Text style={[styles.message, { color: theme.colors.text }]}>
+                                Mapa cargado desde QR
+                            </Text>
+                        )}
+                    </>
+                ) : (
+                    <Text style={[styles.message, { color: theme.colors.text, textAlign: 'center' }]}>
+                        No se detectó ningún mapa. Escanea un QR válido para visualizarlo.
+                    </Text>
+                )}
+            </View>
+
+            {/* Barra inferior */}
             <BottomNavigation
                 navigationState={{ index, routes }}
                 onIndexChange={setIndex}
@@ -89,16 +117,8 @@ const MapaScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingTop: 60,
-    },
-    chipContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginHorizontal: 20,
-        marginBottom: 10,
-    },
+    container: { flex: 1, paddingTop: 60 },
+    chipContainer: { flexDirection: 'row', alignItems: 'center', marginHorizontal: 20, marginBottom: 10 },
     backButton: {
         backgroundColor: '#1a94e1',
         height: 50,
@@ -108,37 +128,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginRight: 10,
     },
-    chip: {
-        flex: 1,
-        justifyContent: 'center',
-        borderRadius: 8,
-        height: 50,
-        backgroundColor: '#1a94e1',
-    },
-    chipText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: 'white',
-        textAlign: 'center',
-        width: '100%',
-    },
-    message: {
-        fontSize: 18,
-        textAlign: 'center',
-        marginBottom: 15,
-        fontWeight: '500',
-    },
-    imageContainer: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 70,
-    },
-    mapImage: {
-        width: '95%',
-        height: '95%',
-        borderRadius: 10,
-    },
+    chip: { flex: 1, justifyContent: 'center', borderRadius: 8, height: 50, backgroundColor: '#1a94e1' },
+    chipText: { fontSize: 16, fontWeight: '600', color: 'white', textAlign: 'center', width: '100%' },
+    imageContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', marginBottom: 70 },
+    mapImage: { width: 300, height: 400, borderRadius: 10 },
+    message: { fontSize: 18, textAlign: 'center', marginBottom: 15, fontWeight: '500' },
 });
 
 export default MapaScreen;
