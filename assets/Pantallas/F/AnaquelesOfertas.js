@@ -2,9 +2,13 @@ import * as React from 'react';
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { BottomNavigation, Text, Button, Card, Chip } from 'react-native-paper';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { ThemeContextProvider, useTheme } from '../../Resources/ThemeProvider';
+import { useTheme } from '../../Resources/ThemeProvider';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../Resources/firebaseConfig';
+import { ActivityIndicator } from 'react-native-paper';
+import CustomAppbar from '../../components/CustomAppbar';
 
-function AnaquelesOfertasScreen({ navigation }) {
+export default function AnaquelesOfertasScreen({ navigation }) {
     const [index, setIndex] = React.useState(0);
     const [routes] = React.useState([
         { key: 'ofertas', title: 'Ofertas', icon: 'tag-outline' },
@@ -13,25 +17,8 @@ function AnaquelesOfertasScreen({ navigation }) {
     ]);
 
     const { theme } = useTheme();
-
-    const secciones = [
-        {
-            titulo: 'LECHES',
-            productos: [
-                { id: 1, nombre: 'Leche 1', antes: '$40', ahora: '$35', img: 'https://alsuper.online/products/404055_p.webp' },
-                { id: 2, nombre: 'Leche 2', antes: '$35', ahora: '$30', img: 'https://www.lala.com.mx/storage/app/media/7501020565935_00.png' },
-                { id: 3, nombre: 'Leche 3', antes: '$25', ahora: '$20', img: 'https://www.lala.com.mx/storage/app/media/Prodcutos/750102054066600-1-min.png' },
-            ],
-        },
-        {
-            titulo: 'HARINAS',
-            productos: [
-                { id: 4, nombre: 'Harina 1', antes: '$40', ahora: '$35', img: 'https://superlavioleta.com/cdn/shop/files/Harina_trigo_selecta_1kg.png?v=1698849403' },
-                { id: 5, nombre: 'Harina 2', antes: '$40', ahora: '$35', img: 'https://foodservicemx.com/wp-content/uploads/2024/09/maseca-1kg.png' },
-                { id: 6, nombre: 'Harina 3', antes: '$45', ahora: '$38', img: 'https://hebmx.vtexassets.com/arquivos/ids/751061/86515_image.png?v=638498080870830000' },
-            ],
-        },
-    ];
+    const [secciones, setSecciones] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
 
     const handleTabPress = (routeKey) => {
         setIndex(routes.findIndex(r => r.key === routeKey));
@@ -40,24 +27,75 @@ function AnaquelesOfertasScreen({ navigation }) {
         if (routeKey === 'config') navigation.navigate('Config');
     };
 
+    // 🔥 Extraer productos desde Firebase
+    React.useEffect(() => {
+        const fetchOffers = async () => {
+            try {
+                const querySnapshot = await getDocs(collection(db, 'productos'));
+
+                const allProducts = querySnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        nombre: data.nombre?.es || 'Producto',
+                        antes: data.precio ? `$${data.precio}` : '$0',
+                        ahora: data.precioOferta ? `$${data.precioOferta}` : '$0',
+                        img: data.imagen?.url || null,
+                        anaquel: data.anaquel || 'OTROS',
+                        oferta: data.oferta || false,
+                    };
+                });
+
+                // 📌 Solo productos con oferta == true
+                const productsWithOffers = allProducts.filter(p => p.oferta);
+
+                // 📌 Agrupar productos por anaquel/sección
+                const grouped = productsWithOffers.reduce((acc, prod) => {
+                    const section = prod.anaquel.toUpperCase();
+                    if (!acc[section]) acc[section] = [];
+                    acc[section].push(prod);
+                    return acc;
+                }, {});
+
+                const formattedSections = Object.keys(grouped).map(key => ({
+                    titulo: key,
+                    productos: grouped[key],
+                }));
+
+                setSecciones(formattedSections);
+            } catch (error) {
+                console.error("Error cargando ofertas:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOffers();
+    }, []);
+
+    if (loading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator animating size="large" color={theme.colors.primary} />
+            </View>
+        );
+    }
+
+    if (secciones.length === 0) {
+        return (
+            <View style={styles.loadingContainer}>
+                <Text style={{ color: theme.colors.text }}>No hay ofertas disponibles</Text>
+            </View>
+        );
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
             {/* Barra superior */}
-            <View style={styles.topBar}>
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={() => navigation.goBack()}
-                >
-                    <MaterialIcons name="arrow-back" size={24} color="white" />
-                </TouchableOpacity>
-                <Chip
-                    mode="contained"
-                    style={styles.chip}
-                    textStyle={styles.chipText}
-                >
-                    OFERTAS POR SECCIÓN
-                </Chip>
-            </View>
+            <CustomAppbar
+                    title="Ofertas por Sección"
+                    showBack
+            />
 
             {/* Contenido scrolleable */}
             <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -68,10 +106,19 @@ function AnaquelesOfertasScreen({ navigation }) {
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                             {seccion.productos.map((prod) => (
                                 <Card key={prod.id} style={[styles.card, { backgroundColor: theme.colors.surface }]}>
-                                    <Image source={{ uri: prod.img }} style={styles.imagen} resizeMode="contain" />
+                                    {prod.img ? (
+                                        <Image source={{ uri: prod.img }} style={styles.imagen} resizeMode="contain" />
+                                    ) : (
+                                        <View style={[styles.imagen, { backgroundColor: '#ccc' }]} />
+                                    )}
                                     <Text style={[styles.precioAntes, { color: theme.colors.text }]}>Antes: {prod.antes}</Text>
                                     <Text style={styles.precioAhora}>AHORA: {prod.ahora}</Text>
-                                    <Button mode="contained-tonal" compact style={styles.botonInfo} onPress={() => navigation.navigate('ProductoOF', { producto: prod })}>
+                                    <Button
+                                        mode="contained-tonal"
+                                        compact
+                                        style={styles.botonInfo}
+                                        onPress={() => navigation.navigate('ProductoOF', { producto: prod })}
+                                    >
                                         + info
                                     </Button>
                                 </Card>
@@ -81,7 +128,7 @@ function AnaquelesOfertasScreen({ navigation }) {
                 ))}
             </ScrollView>
 
-            {/* Barra de navegación inferior */}
+            {/* Barra inferior */}
             <BottomNavigation
                 navigationState={{ index, routes }}
                 onIndexChange={setIndex}
@@ -90,12 +137,7 @@ function AnaquelesOfertasScreen({ navigation }) {
                 barStyle={{ backgroundColor: theme.colors.menuBg }}
                 activeColor={theme.colors.btIcon}
                 inactiveColor={theme.colors.btIconIn}
-                style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                }}
+                style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}
                 theme={{ colors: { secondaryContainer: theme.colors.activeT } }}
                 renderIcon={({ route, focused }) => (
                     <MaterialCommunityIcons
@@ -109,9 +151,12 @@ function AnaquelesOfertasScreen({ navigation }) {
     );
 }
 
-export default AnaquelesOfertasScreen;
-
 const styles = StyleSheet.create({
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     topBar: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -154,6 +199,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginBottom: 8,
+        paddingTop: 5,
     },
     divider: {
         height: 1,
@@ -190,4 +236,5 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         backgroundColor: '#89d0fcff'
     },
+
 });
