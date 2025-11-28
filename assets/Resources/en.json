@@ -72,7 +72,10 @@
         "before": "Before",
         "price": "Price",
         "inStock": "In Stock",
-        "outOfStock": "Out of Stock"
+        "outOfStock": "Out of Stock",
+        "noOffers": "No offers available",
+        "priceNow": "NOW",
+        "moreInfo": "+ info"
     },
     "common": {
         "close": "Close"

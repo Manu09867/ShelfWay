@@ -72,7 +72,10 @@
         "before": "Antes",
         "price": "Precio",
         "inStock": "Disponible",
-        "outOfStock": "Agotado"
+        "outOfStock": "Agotado",
+        "noOffers": "No hay ofertas disponibles",
+        "priceNow": "AHORA",
+        "moreInfo": "+ info"
     },
     "common": {
         "close": "Cerrar"

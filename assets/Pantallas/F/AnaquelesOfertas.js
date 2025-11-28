@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { View, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { BottomNavigation, Text, Button, Card, Chip } from 'react-native-paper';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { BottomNavigation, Text, Button, Card, ActivityIndicator } from 'react-native-paper';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '../../Resources/ThemeProvider';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../Resources/firebaseConfig';
-import { ActivityIndicator } from 'react-native-paper';
 import CustomAppbar from '../../components/CustomAppbar';
+import { useTranslation } from 'react-i18next';
 
 export default function AnaquelesOfertasScreen({ navigation }) {
+    const { t } = useTranslation(); // << TRADUCCIÓN
     const [index, setIndex] = React.useState(0);
+
     const [routes] = React.useState([
-        { key: 'ofertas', title: 'Ofertas', icon: 'tag-outline' },
-        { key: 'mapa', title: 'Mapa', icon: 'map-marker-outline' },
-        { key: 'config', title: 'Configuración', icon: 'cog-outline' },
+        { key: 'ofertas', title: t('mainScreen.bottomNav.offers'), icon: 'tag-outline' },
+        { key: 'mapa', title: t('mainScreen.bottomNav.map'), icon: 'map-marker-outline' },
+        { key: 'config', title: t('mainScreen.bottomNav.settings'), icon: 'cog-outline' },
     ]);
 
     const { theme } = useTheme();
@@ -27,7 +29,6 @@ export default function AnaquelesOfertasScreen({ navigation }) {
         if (routeKey === 'config') navigation.navigate('Config');
     };
 
-    // 🔥 Extraer productos desde Firebase
     React.useEffect(() => {
         const fetchOffers = async () => {
             try {
@@ -37,19 +38,17 @@ export default function AnaquelesOfertasScreen({ navigation }) {
                     const data = doc.data();
                     return {
                         id: doc.id,
-                        nombre: data.nombre?.es || 'Producto',
+                        nombre: data.nombre?.es || t('productsScreen.noProducts'),
                         antes: data.precio ? `$${data.precio}` : '$0',
                         ahora: data.precioOferta ? `$${data.precioOferta}` : '$0',
                         img: data.imagen?.url || null,
-                        anaquel: data.anaquel || 'OTROS',
+                        anaquel: data.anaquel || t('productsScreen.noShelf'),
                         oferta: data.oferta || false,
                     };
                 });
 
-                // 📌 Solo productos con oferta == true
                 const productsWithOffers = allProducts.filter(p => p.oferta);
 
-                // 📌 Agrupar productos por anaquel/sección
                 const grouped = productsWithOffers.reduce((acc, prod) => {
                     const section = prod.anaquel.toUpperCase();
                     if (!acc[section]) acc[section] = [];
@@ -71,7 +70,7 @@ export default function AnaquelesOfertasScreen({ navigation }) {
         };
 
         fetchOffers();
-    }, []);
+    }, [t]);
 
     if (loading) {
         return (
@@ -84,25 +83,25 @@ export default function AnaquelesOfertasScreen({ navigation }) {
     if (secciones.length === 0) {
         return (
             <View style={styles.loadingContainer}>
-                <Text style={{ color: theme.colors.text }}>No hay ofertas disponibles</Text>
+                <Text style={{ color: theme.colors.text }}>{t('productsScreen.noOffers')}</Text>
             </View>
         );
     }
 
     return (
         <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-            {/* Barra superior */}
-            <CustomAppbar
-                    title="Ofertas por Sección"
-                    showBack
-            />
 
-            {/* Contenido scrolleable */}
+            <CustomAppbar title={t('offersScreen.title')} showBack />
+
             <ScrollView contentContainerStyle={styles.scrollContainer}>
                 {secciones.map((seccion, index) => (
                     <View key={index} style={styles.seccionContainer}>
-                        <Text style={[styles.titulo, { color: theme.colors.text }]}>{seccion.titulo}</Text>
+                        <Text style={[styles.titulo, { color: theme.colors.text }]}>
+                            {seccion.titulo}
+                        </Text>
+
                         <View style={styles.divider} />
+
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                             {seccion.productos.map((prod) => (
                                 <Card key={prod.id} style={[styles.card, { backgroundColor: theme.colors.surface }]}>
@@ -111,15 +110,22 @@ export default function AnaquelesOfertasScreen({ navigation }) {
                                     ) : (
                                         <View style={[styles.imagen, { backgroundColor: '#ccc' }]} />
                                     )}
-                                    <Text style={[styles.precioAntes, { color: theme.colors.text }]}>Antes: {prod.antes}</Text>
-                                    <Text style={styles.precioAhora}>AHORA: {prod.ahora}</Text>
+
+                                    <Text style={[styles.precioAntes, { color: theme.colors.text }]}>
+                                        {t('productsScreen.before')}: {prod.antes}
+                                    </Text>
+
+                                    <Text style={styles.precioAhora}>
+                                        {t('productsScreen.priceNow')}: {prod.ahora}
+                                    </Text>
+
                                     <Button
                                         mode="contained-tonal"
                                         compact
                                         style={styles.botonInfo}
                                         onPress={() => navigation.navigate('ProductoOF', { producto: prod })}
                                     >
-                                        + info
+                                        {t('productsScreen.moreInfo')}
                                     </Button>
                                 </Card>
                             ))}
@@ -128,7 +134,6 @@ export default function AnaquelesOfertasScreen({ navigation }) {
                 ))}
             </ScrollView>
 
-            {/* Barra inferior */}
             <BottomNavigation
                 navigationState={{ index, routes }}
                 onIndexChange={setIndex}
@@ -150,6 +155,7 @@ export default function AnaquelesOfertasScreen({ navigation }) {
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     loadingContainer: {

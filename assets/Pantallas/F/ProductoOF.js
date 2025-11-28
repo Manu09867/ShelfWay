@@ -7,13 +7,14 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../Resources/firebaseConfig';
 import { useTheme } from '../../Resources/ThemeProvider';
 import CustomAppbar from '../../components/CustomAppbar';
+import { useTranslation } from 'react-i18next'; // 👈 Nuevo import
 
 const ProductoOF = ({ navigation }) => {
   const route = useRoute();
   const { producto } = route.params;
   const { id } = producto;
-
   const { theme } = useTheme();
+  const { t, i18n } = useTranslation(); // 👈 Usamos traducción
 
   const [item, setItem] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
@@ -26,12 +27,14 @@ const ProductoOF = ({ navigation }) => {
 
         if (snap.exists()) {
           const data = snap.data();
+          const lang = i18n.language || 'es'; // 👈 Detecta idioma actual
+
           setItem({
             id,
-            nombre: data.nombre?.es || 'Producto',
+            nombre: data.nombre?.[lang] || t('product.noName'),
             precioAntes: data.precio ? `$${data.precio}` : '$0',
             precioAhora: data.precioOferta ? `$${data.precioOferta}` : '$0',
-            descripcion: data.descripcion?.es || 'Sin descripción disponible.',
+            descripcion: data.descripcion?.[lang] || t('product.noDescription'),
             imagen: data.imagen?.url || null,
           });
         } else {
@@ -45,7 +48,7 @@ const ProductoOF = ({ navigation }) => {
     };
 
     fetchProduct();
-  }, []);
+  }, [i18n.language]); // 👈 Se actualiza si cambia idioma
 
   if (loading) {
     return (
@@ -58,7 +61,7 @@ const ProductoOF = ({ navigation }) => {
   if (!item) {
     return (
       <View style={styles.centered}>
-        <Text>No se encontró el producto.</Text>
+        <Text>{t('product.notFound')}</Text>
       </View>
     );
   }
@@ -66,20 +69,19 @@ const ProductoOF = ({ navigation }) => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <CustomAppbar
-        title="Producto"
+        title={t('product.title')}
         showBack
       />
 
       <ScrollView contentContainerStyle={styles.content}>
-
         {/* Nombre */}
         <Text style={[styles.productName, { color: theme.colors.text }]}>
           {item.nombre}
         </Text>
 
         {/* Precios */}
-        <Text style={styles.precioAntes}>Antes: {item.precioAntes}</Text>
-        <Text style={styles.precioAhora}>AHORA: {item.precioAhora}</Text>
+        <Text style={styles.precioAntes}>{t('product.before')}: {item.precioAntes}</Text>
+        <Text style={styles.precioAhora}>{t('product.now')}: {item.precioAhora}</Text>
 
         {/* Imagen */}
         {item.imagen ? (
@@ -88,7 +90,7 @@ const ProductoOF = ({ navigation }) => {
           <View style={[styles.productImage, { backgroundColor: '#ccc' }]} />
         )}
 
-        {/* Descripción ahora en Card */}
+        {/* Descripción */}
         <Card style={styles.descriptionCard}>
           <Card.Content>
             <Text style={[styles.productDescription, { color: theme.colors.text }]}>
