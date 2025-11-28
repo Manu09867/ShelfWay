@@ -4,6 +4,7 @@ import { Text, BottomNavigation, ActivityIndicator } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '../../Resources/ThemeProvider';
 import CustomAppbar from '../../components/CustomAppbar';
+import { useTranslation } from 'react-i18next';
 
 const MapaScreen = ({ navigation, route }) => {
     const { theme } = useTheme();
@@ -11,6 +12,7 @@ const MapaScreen = ({ navigation, route }) => {
     const [loading, setLoading] = React.useState(true);
     const [loadError, setLoadError] = React.useState(false);
     const [storedMapUrl, setStoredMapUrl] = React.useState(null);
+    const { t } = useTranslation(); // << TRADUCCIÓN
 
     React.useEffect(() => {
         if (route?.params?.mapUrl) {
@@ -40,7 +42,7 @@ const MapaScreen = ({ navigation, route }) => {
 
             {/* barra superior */}
             <CustomAppbar
-                title="Mapa del Supermercado"
+                title={t('mapScreen.title')}
                 showBack
             />
 
@@ -54,7 +56,7 @@ const MapaScreen = ({ navigation, route }) => {
 
                         {loadError && (
                             <Text style={[styles.message, { color: theme.colors.text }]}>
-                                Error al cargar la imagen. Verifica el QR.
+                                {t('mapScreen.QRerror')}
                             </Text>
                         )}
 
@@ -79,13 +81,13 @@ const MapaScreen = ({ navigation, route }) => {
 
                         {!loading && !loadError && (
                             <Text style={[styles.message, { color: theme.colors.text }]}>
-                                Presiona el mapa para ver ofertas
+                                {t('mapScreen.QRloaded')}
                             </Text>
                         )}
                     </>
                 ) : (
                     <Text style={[styles.message, { color: theme.colors.text }]}>
-                        No se detectó ningún mapa. Escanea un QR válido para visualizarlo.
+                        {t('mapScreen.noQR')}
                     </Text>
                 )}
             </View>

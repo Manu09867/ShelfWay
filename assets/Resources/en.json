@@ -72,7 +72,10 @@
         "before": "Before",
         "price": "Price",
         "inStock": "In Stock",
-        "outOfStock": "Out of Stock"
+        "outOfStock": "Out of Stock",
+        "noOffers": "No offers available",
+        "priceNow": "NOW",
+        "moreInfo": "+ info"
     },
     "common": {
         "close": "Close"
@@ -109,5 +112,16 @@
             "next": "Next",
             "finish": "Finish"
         }
+    },
+    "offersScreen": {
+        "title": "Offers by Section"
+    },
+    "product": {
+        "title": "Product",
+        "before": "Before",
+        "now": "NOW",
+        "noDescription": "No description available.",
+        "notFound": "Product not found.",
+        "noName": "Product"
     }
 }

@@ -72,7 +72,10 @@
         "before": "Antes",
         "price": "Precio",
         "inStock": "Disponible",
-        "outOfStock": "Agotado"
+        "outOfStock": "Agotado",
+        "noOffers": "No hay ofertas disponibles",
+        "priceNow": "AHORA",
+        "moreInfo": "+ info"
     },
     "common": {
         "close": "Cerrar"
@@ -109,5 +112,22 @@
             "next": "Siguiente",
             "finish": "Finalizar"
         }
+    },
+    "offersScreen": {
+        "title": "Ofertas por Sección"
+    },
+    "mapScreen": {
+        "title": "Mapa",
+        "QRerror": "Error al cargar la imagen. Verifica el QR.",
+        "QRloaded": "Preciona el mapa para ver las ofertas",
+        "noQR": "No se detectó ningún mapa. Escanea un QR válido para visualizarlo."
+    },
+    "product": {
+        "title": "Producto",
+        "before": "Antes",
+        "now": "AHORA",
+        "noDescription": "Sin descripción disponible.",
+        "notFound": "No se encontró el producto.",
+        "noName": "Producto"
     }
 }
