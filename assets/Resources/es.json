@@ -116,11 +116,16 @@
     "offersScreen": {
         "title": "Ofertas por Sección"
     },
+    "tab": {
+        "offers": "Ofertas",
+        "map": "Mapa",
+        "settings": "Configuración"
+    },
     "mapScreen": {
         "title": "Mapa",
-        "QRerror": "Error al cargar la imagen. Verifica el QR.",
-        "QRloaded": "Preciona el mapa para ver las ofertas",
-        "noQR": "No se detectó ningún mapa. Escanea un QR válido para visualizarlo."
+        "QRerror": "Error al cargar el QR",
+        "QRloaded": "QR cargado correctamente",
+        "noQR": "No se ha proporcionado un QR"
     },
     "product": {
         "title": "Producto",

@@ -7,14 +7,14 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../Resources/firebaseConfig';
 import { useTheme } from '../../Resources/ThemeProvider';
 import CustomAppbar from '../../components/CustomAppbar';
-import { useTranslation } from 'react-i18next'; // 👈 Nuevo import
+import { useTranslation } from 'react-i18next';
 
 const ProductoOF = ({ navigation }) => {
   const route = useRoute();
   const { producto } = route.params;
   const { id } = producto;
   const { theme } = useTheme();
-  const { t, i18n } = useTranslation(); // 👈 Usamos traducción
+  const { t, i18n } = useTranslation();
 
   const [item, setItem] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
@@ -27,7 +27,7 @@ const ProductoOF = ({ navigation }) => {
 
         if (snap.exists()) {
           const data = snap.data();
-          const lang = i18n.language || 'es'; // 👈 Detecta idioma actual
+          const lang = i18n.language || 'es';
 
           setItem({
             id,
@@ -48,7 +48,7 @@ const ProductoOF = ({ navigation }) => {
     };
 
     fetchProduct();
-  }, [i18n.language]); // 👈 Se actualiza si cambia idioma
+  }, [i18n.language]);
 
   if (loading) {
     return (

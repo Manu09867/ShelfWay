@@ -25,9 +25,9 @@ const MapaScreen = ({ navigation, route }) => {
     const mapUrl = storedMapUrl;
 
     const [routes] = React.useState([
-        { key: 'ofertas', title: 'Ofertas', icon: 'tag-outline' },
-        { key: 'mapa', title: 'Mapa', icon: 'map-marker-outline' },
-        { key: 'config', title: 'Configuración', icon: 'cog-outline' },
+        { key: 'ofertas', title: t('mainScreen.bottomNav.offers'), icon: 'tag-outline' },
+        { key: 'mapa', title: t('mainScreen.bottomNav.map'), icon: 'map-marker-outline' },
+        { key: 'config', title: t('mainScreen.bottomNav.settings'), icon: 'cog-outline' },
     ]);
 
     const handleTabPress = (routeKey) => {

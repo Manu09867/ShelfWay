@@ -116,6 +116,17 @@
     "offersScreen": {
         "title": "Offers by Section"
     },
+    "tab": {
+        "offers": "Offers",
+        "map": "Map",
+        "settings": "Settings"
+    },
+    "mapScreen": {
+        "title": "Map",
+        "QRerror": "Error loading QR",
+        "QRloaded": "QR successfully loaded",
+        "noQR": "No QR provided"
+    },
     "product": {
         "title": "Product",
         "before": "Before",
