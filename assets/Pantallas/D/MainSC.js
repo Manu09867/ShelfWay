@@ -139,7 +139,7 @@ function MainScreen() {
     const renderScene = () => {
         switch (routes[index].key) {
             case 'ofertas':
-                return <OfertasScreen />;
+                return <OfertasScreen navigation={navigation} />;
             case 'config':
                 return <ConfigScreen />;
             case 'mapa':

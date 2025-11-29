@@ -109,5 +109,16 @@
             "next": "Next",
             "finish": "Finish"
         }
+    },
+    "offersScreen": {
+        "shelvesWithOffers": "Shelves with Offers"
+    },
+    "categories": {
+        "dairy": "Dairy",
+        "meat": "Meat",
+        "fruits": "Fruits",
+        "vegetables": "Vegetables",
+        "drinks": "Drinks",
+        "cleaning": "Cleaning"
     }
 }

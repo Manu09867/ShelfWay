@@ -1,54 +1,132 @@
 import * as React from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Chip, Text } from 'react-native-paper';
+import { Chip, Text, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { useTranslation } from 'react-i18next';
 
-const OfertasScreen = () => {
-    // anaqueles botones
-    const anaqueles = [
-        { id: 1, nombre: 'Lácteos', icon: 'cow', notificaciones: 0 },
-        { id: 2, nombre: 'Carnes', icon: 'food-steak', notificaciones: 0 },
-        { id: 3, nombre: 'Frutas', icon: 'fruit-cherries', notificaciones: 0 },
-        { id: 4, nombre: 'Verduras', icon: 'carrot', notificaciones: 0 },
-        { id: 5, nombre: 'Bebidas', icon: 'bottle-soda', notificaciones: 0 },
-        { id: 6, nombre: 'Limpieza', icon: 'spray', notificaciones: 0 },
-    ];
+const OfertasScreen = ({ navigation }) => {
+    const paperTheme = useTheme();
+    const { i18n, t } = useTranslation();
+    const currentLang = i18n.language || 'es';
+    const db = getFirestore();
+
+    const [anaqueles, setAnaqueles] = React.useState([
+        { id: 1, nombre: 'Lácteos', tag: 'lacteos', icon: 'cow', notificaciones: 0 },
+        { id: 2, nombre: 'Carnes', tag: 'carnes', icon: 'food-steak', notificaciones: 0 },
+        { id: 3, nombre: 'Frutas', tag: 'frutas', icon: 'fruit-cherries', notificaciones: 0 },
+        { id: 4, nombre: 'Verduras', tag: 'verduras', icon: 'carrot', notificaciones: 0 },
+        { id: 5, nombre: 'Bebidas', tag: 'bebidas', icon: 'bottle-soda', notificaciones: 0 },
+        { id: 6, nombre: 'Limpieza', tag: 'limpieza', icon: 'spray', notificaciones: 0 },
+    ]);
+
+    React.useEffect(() => {
+        const cargarOfertas = async () => {
+            try {
+                const productosRef = collection(db, "productos");
+                const snapshot = await getDocs(productosRef);
+
+                const productos = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        ...data,
+                        // Usar la traducción del nombre si está disponible
+                        nombreTraducido: data.nombre?.[currentLang] || data.nombre?.es || ''
+                    };
+                });
+
+                const nuevaLista = anaqueles.map(a => {
+                    // Función para quitar acentos
+                    const normalizar = (str) =>
+                        str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+                    const cantidad = productos.filter(p => {
+                        if (!p.oferta || !p.tags?.es) return false;
+
+                        // Normalizamos todo
+                        const tagsNorm = p.tags.es.map(t => normalizar(t));
+                        const tagAnaquel = normalizar(a.tag);
+
+                        return tagsNorm.includes(tagAnaquel);
+                    }).length;
+
+                    return { ...a, notificaciones: cantidad };
+                });
+
+                setAnaqueles(nuevaLista);
+
+            } catch (error) {
+                console.log("Error cargando ofertas:", error);
+            }
+        };
+
+        cargarOfertas();
+    }, [currentLang]); // Agregar currentLang como dependencia
+
+    // Función para obtener el nombre traducido de la categoría
+    const getTranslatedCategoryName = (categoryName) => {
+        const translations = {
+            'Lácteos': t('categories.dairy', 'Lácteos'),
+            'Carnes': t('categories.meat', 'Carnes'),
+            'Frutas': t('categories.fruits', 'Frutas'),
+            'Verduras': t('categories.vegetables', 'Verduras'),
+            'Bebidas': t('categories.drinks', 'Bebidas'),
+            'Limpieza': t('categories.cleaning', 'Limpieza')
+        };
+        return translations[categoryName] || categoryName;
+    };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: paperTheme.colors.background }]}>
             <Chip
                 mode="contained"
-                style={styles.chip}
-                textStyle={styles.chipText}
+                style={[styles.chip, { backgroundColor: paperTheme.colors.primary }]}
+                textStyle={[styles.chipText, { color: paperTheme.colors.onPrimary }]}
             >
-                Anaqueles con Ofertas
+                {t('offersScreen.shelvesWithOffers', 'Anaqueles con Ofertas')}
             </Chip>
-            
+
             <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
                 <View style={styles.gridContainer}>
                     {anaqueles.map((anaquel) => (
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             key={anaquel.id}
-                            style={styles.anaquelButton}
-                            onPress={() => console.log(`Clic en ${anaquel.nombre}`)}
+                            style={[styles.anaquelButton, { backgroundColor: paperTheme.colors.primary }]}
+                            onPress={() =>
+                                navigation.navigate("ProductosPorCategoria", {
+                                    categoria: anaquel.nombre
+                                })
+                            }
                         >
-                            {/* Icono*/}
-                            <MaterialCommunityIcons 
-                                name={anaquel.icon} 
-                                size={40} 
-                                color="#1a94e1" 
+                            <MaterialCommunityIcons
+                                name={anaquel.icon}
+                                size={40}
+                                color={paperTheme.colors.onPrimary}
                                 style={styles.anaquelIcon}
                             />
-                            
-                            {/* Nombre anaquel */}
-                            <Text style={styles.anaquelText}>{anaquel.nombre}</Text>
-                            
-                            {/* notificaciones */}
-                            <View style={styles.notificationBadge}>
-                                <Text style={styles.notificationText}>
-                                    {anaquel.notificaciones}
-                                </Text>
-                            </View>
+
+                            <Text style={[styles.anaquelText, { color: paperTheme.colors.onPrimary }]}>
+                                {getTranslatedCategoryName(anaquel.nombre)}
+                            </Text>
+
+                            {/* 🔴 BADGE DE NOTIFICACIONES */}
+                            {anaquel.notificaciones > 0 && (
+                                <View
+                                    style={[
+                                        styles.notificationBadge,
+                                        { backgroundColor: paperTheme.colors.error }
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            styles.notificationText,
+                                            { color: paperTheme.colors.onError }
+                                        ]}
+                                    >
+                                        {anaquel.notificaciones}
+                                    </Text>
+                                </View>
+                            )}
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -58,42 +136,25 @@ const OfertasScreen = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        paddingTop: 60,
-        backgroundColor: '#f5f5f5',
-    },
+    container: { flex: 1, padding: 20, paddingTop: 60 },
     chip: {
         width: '100%',
         justifyContent: 'center',
-        marginBottom: 20,
+        marginBottom: 80,
         borderRadius: 8,
         height: 50,
-        backgroundColor: '#1a94e1',
     },
-    chipText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: 'white',
-        textAlign: 'center',
-        width: '100%',
-    },
-    scrollView: {
-        flex: 1,
-    },
-    scrollContent: {
-        paddingBottom: 20,
-    },
+    chipText: { fontSize: 16, fontWeight: '600', textAlign: 'center', width: '100%' },
+    scrollView: { flex: 1 },
+    scrollContent: { paddingBottom: 20 },
     gridContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
     },
     anaquelButton: {
-        width: '48%', 
-        aspectRatio: 1, 
-        backgroundColor: 'white',
+        width: '48%',
+        aspectRatio: 1,
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
@@ -105,20 +166,12 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         position: 'relative',
     },
-    anaquelIcon: {
-        marginBottom: 10,
-    },
-    anaquelText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#333',
-        textAlign: 'center',
-    },
+    anaquelIcon: { marginBottom: 10 },
+    anaquelText: { fontSize: 16, fontWeight: '600', textAlign: 'center' },
     notificationBadge: {
         position: 'absolute',
         bottom: 10,
         right: 10,
-        backgroundColor: '#ff4444',
         borderRadius: 12,
         width: 24,
         height: 24,
@@ -126,11 +179,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         elevation: 3,
     },
-    notificationText: {
-        color: 'white',
-        fontSize: 12,
-        fontWeight: 'bold',
-    },
+    notificationText: { fontSize: 12, fontWeight: 'bold' },
 });
 
 export default OfertasScreen;

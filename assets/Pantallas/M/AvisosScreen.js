@@ -1,90 +1,269 @@
 import * as React from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Avatar, Button, Card, Text, Chip } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { Avatar, Button, Card, Text, Chip, useTheme } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { db } from '../../Resources/firebaseConfig'; // Ajusta la ruta según tu configuración
 
-const AvisosScreen = ({ navigation }) => (
-    <View style={styles.container}>
-        {/* Chip*/}
-        <View style={styles.chipContainer}>
-            <TouchableOpacity
-                style={styles.backButton}
-                onPress={() => navigation.goBack()}
+const AvisosScreen = ({ navigation }) => {
+    const theme = useTheme();
+    const { width, height } = useWindowDimensions();
+    const isLandscape = width > height;
+
+    const [eventos, setEventos] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+
+    // Cargar eventos desde Firebase
+    React.useEffect(() => {
+        const cargarEventos = async () => {
+            try {
+                setLoading(true);
+                const eventosRef = collection(db, "eventos");
+                const q = query(eventosRef, orderBy("createdAt", "desc"));
+                const snapshot = await getDocs(q);
+
+                const eventosData = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                // Filtrar solo eventos activos
+                const eventosActivos = eventosData.filter(evento => evento.activo === true);
+                setEventos(eventosActivos);
+            } catch (error) {
+                console.error("Error cargando eventos:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        cargarEventos();
+    }, []);
+
+    // Función para formatear fechas
+    const formatearFecha = (fechaString) => {
+        if (!fechaString) return "Fecha no especificada";
+
+        try {
+            const fecha = new Date(fechaString);
+            return fecha.toLocaleDateString('es-ES', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        } catch {
+            return fechaString;
+        }
+    };
+
+    // Función para obtener el ícono según el tipo de evento
+    const obtenerIcono = (titulo) => {
+        const tituloLower = titulo?.toLowerCase() || '';
+
+        if (tituloLower.includes('santa clara') || tituloLower.includes('regalo') || tituloLower.includes('gift')) {
+            return 'gift';
+        } else if (tituloLower.includes('buen fin') || tituloLower.includes('sale') || tituloLower.includes('oferta')) {
+            return 'sale';
+        } else if (tituloLower.includes('nuevo') || tituloLower.includes('new')) {
+            return 'new-box';
+        } else if (tituloLower.includes('descuento') || tituloLower.includes('discount')) {
+            return 'percent';
+        } else {
+            return 'calendar';
+        }
+    };
+
+    // Función para navegar al detalle del evento
+    const navegarADetalleEvento = (evento) => {
+        navigation.navigate('EventoDetalle', { evento });
+    };
+
+    if (loading) {
+        return (
+            <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+                <View style={styles.chipContainer}>
+                    <TouchableOpacity
+                        style={[styles.backButton, { backgroundColor: theme.colors.primary }]}
+                        onPress={() => navigation.goBack()}
+                    >
+                        <MaterialIcons
+                            name="arrow-back"
+                            size={24}
+                            color={theme.colors.onPrimary}
+                        />
+                    </TouchableOpacity>
+
+                    <Chip
+                        mode="contained"
+                        style={[styles.chip, { backgroundColor: theme.colors.primary }]}
+                        textStyle={[styles.chipText, { color: theme.colors.onPrimary }]}
+                    >
+                        Avisos del Supermercado
+                    </Chip>
+                </View>
+                <View style={styles.loadingContainer}>
+                    <Text style={{ color: theme.colors.text }}>Cargando eventos...</Text>
+                </View>
+            </View>
+        );
+    }
+
+    return (
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+
+            {/* Chip + regresar */}
+            <View style={[
+                styles.chipContainer,
+                isLandscape && styles.chipContainerLandscape
+            ]}>
+
+                <TouchableOpacity
+                    style={[
+                        styles.backButton,
+                        { backgroundColor: theme.colors.primary }
+                    ]}
+                    onPress={() => navigation.goBack()}
+                >
+                    <MaterialIcons
+                        name="arrow-back"
+                        size={24}
+                        color={theme.colors.onPrimary}
+                    />
+                </TouchableOpacity>
+
+                <Chip
+                    mode="contained"
+                    style={[
+                        styles.chip,
+                        { backgroundColor: theme.colors.primary },
+                        isLandscape && styles.chipLandscape
+                    ]}
+                    textStyle={[
+                        styles.chipText,
+                        { color: theme.colors.onPrimary },
+                        isLandscape && styles.chipTextLandscape
+                    ]}
+                >
+                    Avisos del Supermercado ({eventos.length})
+                </Chip>
+            </View>
+
+            <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={[
+                    styles.scrollContent,
+                    isLandscape && styles.scrollContentLandscape
+                ]}
             >
-                <MaterialIcons name="arrow-back" size={24} color="white" />
-            </TouchableOpacity>
-            <Chip
-                mode="contained"
-                style={styles.chip}
-                textStyle={styles.chipText}
-            >
-                Avisos del Supermercado
-            </Chip>
+
+                {eventos.length === 0 ? (
+                    <View style={styles.emptyContainer}>
+                        <Text style={{ color: theme.colors.text, fontSize: 16, textAlign: 'center' }}>
+                            No hay eventos activos en este momento
+                        </Text>
+                    </View>
+                ) : (
+                    eventos.map((evento) => (
+                        <Card
+                            key={evento.id}
+                            style={[
+                                styles.card,
+                                { backgroundColor: theme.colors.primary },
+                                isLandscape && styles.cardLandscape
+                            ]}
+                        >
+                            <View style={isLandscape && styles.cardContentLandscape}>
+                                <View style={isLandscape && styles.cardTextContainer}>
+                                    <Card.Title
+                                        title={evento.titulo?.es || "Evento sin título"}
+                                        subtitle={`${formatearFecha(evento.fechaInicio)} - ${formatearFecha(evento.fechaFin)}`}
+                                        titleStyle={[
+                                            { color: theme.colors.onPrimary },
+                                            isLandscape && styles.titleLandscape
+                                        ]}
+                                        subtitleStyle={[
+                                            { color: theme.colors.onPrimary },
+                                            isLandscape && styles.subtitleLandscape
+                                        ]}
+                                        left={props => (
+                                            <Avatar.Icon
+                                                {...props}
+                                                icon={obtenerIcono(evento.titulo?.es)}
+                                                color={theme.colors.onPrimary}
+                                                style={{ backgroundColor: 'transparent' }}
+                                                size={isLandscape ? 50 : 40}
+                                            />
+                                        )}
+                                    />
+
+                                    <Card.Content style={isLandscape && styles.cardContentText}>
+                                        <Text
+                                            variant="titleLarge"
+                                            style={[
+                                                { color: theme.colors.onPrimary },
+                                                isLandscape && styles.contentTitleLandscape
+                                            ]}
+                                        >
+                                            {evento.titulo?.es || "Evento sin título"}
+                                        </Text>
+
+                                        <Text
+                                            variant="bodyMedium"
+                                            style={[
+                                                { color: theme.colors.onPrimary },
+                                                isLandscape && styles.contentTextLandscape
+                                            ]}
+                                        >
+                                            {evento.descripcion?.es || "Descripción no disponible"}
+                                        </Text>
+                                    </Card.Content>
+
+                                    <Card.Actions style={isLandscape && styles.actionsLandscape}>
+                                        <Button
+                                            mode="contained"
+                                            onPress={() => navegarADetalleEvento(evento)}
+                                            textColor={theme.colors.primary}
+                                            style={[
+                                                { backgroundColor: theme.colors.onPrimary },
+                                                isLandscape && styles.buttonLandscape
+                                            ]}
+                                        >
+                                            Ver Evento
+                                        </Button>
+                                    </Card.Actions>
+                                </View>
+
+                                {evento.imagenUrl && (
+                                    <Card.Cover
+                                        source={{ uri: evento.imagenUrl }}
+                                        style={isLandscape && styles.coverLandscape}
+                                    />
+                                )}
+                            </View>
+                        </Card>
+                    ))
+                )}
+
+            </ScrollView>
         </View>
-
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-
-            <Card style={styles.card}>
-                <Card.Title
-                    title="Santa Clara 2025"
-                    subtitle="Del 10 al 17 de agosto"
-                    left={props => <Avatar.Icon {...props} icon="gift" />}
-                />
-                <Card.Content>
-                    <Text variant="titleLarge">¡Llegó Santa Clara!</Text>
-                    <Text variant="bodyMedium">
-                        • Descubre la nueva linea de productos de la marca
-                    </Text>
-                </Card.Content>
-                <Card.Cover source={{ uri: 'https://reditery.com/images/branding/blog/santa_clara_nuevo_logotipo_001.png' }} />
-                <Card.Actions>
-                    <Button mode="contained" onPress={() => navigation.navigate('Aviso1')}>
-                        Ver Evento
-                    </Button>
-                </Card.Actions>
-            </Card>
-
-
-            <Card style={styles.card}>
-                <Card.Title
-                    title="El Buen Fin 2025"
-                    subtitle="14 al 17 de noviembre"
-                    left={props => <Avatar.Icon {...props} icon="sale" />}
-                />
-                <Card.Content>
-                    <Text variant="titleLarge">El Mejor Buen Fin</Text>
-                    <Text variant="bodyMedium">
-                        • Hasta 18 MSI en todas las compras{"\n"}
-                        • Precios especiales en mayoreo{"\n"}
-                        • Envío gratis en compras mayores a $500{"\n"}
-                        • Cashback del 5% con tarjeta store
-                    </Text>
-                </Card.Content>
-                <Card.Cover source={{ uri: 'https://i.pinimg.com/736x/3c/53/4f/3c534ff501cbdbb4618f99ffcf7885f3.jpg' }} />
-                <Card.Actions>
-                    <Button mode="contained" onPress={() => navigation.navigate('Aviso2')}>
-                        Ver Promociones
-                    </Button>
-                </Card.Actions>
-            </Card>
-        </ScrollView>
-    </View>
-);
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
         paddingTop: 60,
-        backgroundColor: '#f5f5f5',
     },
     chipContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
     },
+    chipContainerLandscape: {
+        marginBottom: 30,
+    },
     backButton: {
-        backgroundColor: '#1a94e1',
         height: 50,
         width: 50,
         borderRadius: 8,
@@ -97,14 +276,18 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         borderRadius: 8,
         height: 50,
-        backgroundColor: '#1a94e1',
+    },
+    chipLandscape: {
+        height: 60,
     },
     chipText: {
         fontSize: 16,
         fontWeight: '600',
-        color: 'white',
         textAlign: 'center',
         width: '100%',
+    },
+    chipTextLandscape: {
+        fontSize: 18,
     },
     scrollView: {
         flex: 1,
@@ -112,9 +295,68 @@ const styles = StyleSheet.create({
     scrollContent: {
         paddingBottom: 20,
     },
+    scrollContentLandscape: {
+        paddingBottom: 30,
+    },
     card: {
         marginBottom: 16,
         elevation: 4,
+    },
+    cardLandscape: {
+        marginBottom: 20,
+        borderRadius: 16,
+        overflow: 'hidden',
+    },
+    cardContentLandscape: {
+        flexDirection: 'row',
+        height: 280,
+    },
+    cardTextContainer: {
+        flex: 1,
+        padding: 8,
+    },
+    cardContentText: {
+        flex: 1,
+        paddingHorizontal: 0,
+    },
+    titleLandscape: {
+        fontSize: 20,
+    },
+    subtitleLandscape: {
+        fontSize: 16,
+    },
+    contentTitleLandscape: {
+        fontSize: 22,
+        marginBottom: 12,
+    },
+    contentTextLandscape: {
+        fontSize: 16,
+        lineHeight: 22,
+    },
+    coverLandscape: {
+        flex: 1,
+        margin: 12,
+        borderRadius: 12,
+        height: 'auto',
+    },
+    actionsLandscape: {
+        paddingHorizontal: 0,
+        paddingBottom: 0,
+    },
+    buttonLandscape: {
+        paddingHorizontal: 20,
+        paddingVertical: 6,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    emptyContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 50,
     },
 });
 

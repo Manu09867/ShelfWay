@@ -109,5 +109,16 @@
             "next": "Siguiente",
             "finish": "Finalizar"
         }
+    },
+    "offersScreen": {
+        "shelvesWithOffers": "Anaqueles con Ofertas"
+    },
+    "categories": {
+        "dairy": "Lácteos",
+        "meat": "Carnes",
+        "fruits": "Frutas",
+        "vegetables": "Verduras",
+        "drinks": "Bebidas",
+        "cleaning": "Limpieza"
     }
 }

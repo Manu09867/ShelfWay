@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
-import { Button, Chip } from 'react-native-paper';
+import { Button, Chip, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 const ConfigScreen = () => {
     const [screenDimensions, setScreenDimensions] = React.useState(Dimensions.get('window'));
     const navigation = useNavigation();
+    const paperTheme = useTheme(); // <-- Tema dinámico (light/dark)
 
     React.useEffect(() => {
         const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -18,27 +19,40 @@ const ConfigScreen = () => {
     const isLandscape = screenDimensions.width > screenDimensions.height;
 
     return (
-        <View style={[styles.container, isLandscape && styles.containerLandscape]}>
-            {/* Chip*/}
-            <Chip 
+        <View
+            style={[
+                styles.container,
+                { backgroundColor: paperTheme.colors.background },
+                isLandscape && styles.containerLandscape
+            ]}
+        >
+            {/* Chip con colores del tema */}
+            <Chip
                 mode="contained"
-                style={[styles.chip, isLandscape && styles.chipLandscape]}
-                textStyle={styles.chipText}
+                style={[
+                    styles.chip,
+                    { backgroundColor: paperTheme.colors.primary },
+                    isLandscape && styles.chipLandscape
+                ]}
+                textStyle={[
+                    styles.chipText,
+                    { color: paperTheme.colors.onPrimary }
+                ]}
             >
                 Configuración
             </Chip>
-            
+
             <View style={[styles.buttonsContainer, isLandscape && styles.buttonsContainerLandscape]}>
                 <Button
                     icon="bell-outline"
                     mode="contained"
-                    onPress={() => navigation.navigate('Avisos')} // Navegación agregada
+                    onPress={() => navigation.navigate('Avisos')}
                     style={[styles.button, isLandscape && styles.buttonLandscape]}
                     contentStyle={styles.buttonContent}
                 >
                     Avisos
                 </Button>
-                
+
                 <Button
                     icon="alert-circle-outline"
                     mode="contained"
@@ -48,7 +62,7 @@ const ConfigScreen = () => {
                 >
                     Reporte
                 </Button>
-                
+
                 <Button
                     icon="palette-outline"
                     mode="contained"
@@ -79,7 +93,6 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         borderRadius: 8,
         height: 50,
-        backgroundColor: '#1a94e1',
     },
     chipLandscape: {
         marginBottom: 20,
@@ -88,7 +101,6 @@ const styles = StyleSheet.create({
     chipText: {
         fontSize: 16,
         fontWeight: '600',
-        color: 'white',
         textAlign: 'center',
         width: '100%',
     },
