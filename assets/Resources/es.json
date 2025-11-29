@@ -72,7 +72,10 @@
         "before": "Antes",
         "price": "Precio",
         "inStock": "Disponible",
-        "outOfStock": "Agotado"
+        "outOfStock": "Agotado",
+        "noOffers": "No hay ofertas disponibles",
+        "priceNow": "AHORA",
+        "moreInfo": "+ info"
     },
     "common": {
         "close": "Cerrar"
@@ -119,6 +122,26 @@
         "fruits": "Frutas",
         "vegetables": "Verduras",
         "drinks": "Bebidas",
-        "cleaning": "Limpieza"
+        "cleaning": "Limpieza",
+        "title": "Ofertas por Sección"
+    },
+    "tab": {
+        "offers": "Ofertas",
+        "map": "Mapa",
+        "settings": "Configuración"
+    },
+    "mapScreen": {
+        "title": "Mapa",
+        "QRerror": "Error al cargar el QR",
+        "QRloaded": "QR cargado correctamente",
+        "noQR": "No se ha proporcionado un QR"
+    },
+    "product": {
+        "title": "Producto",
+        "before": "Antes",
+        "now": "AHORA",
+        "noDescription": "Sin descripción disponible.",
+        "notFound": "No se encontró el producto.",
+        "noName": "Producto"
     }
 }

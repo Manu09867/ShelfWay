@@ -72,7 +72,10 @@
         "before": "Before",
         "price": "Price",
         "inStock": "In Stock",
-        "outOfStock": "Out of Stock"
+        "outOfStock": "Out of Stock",
+        "noOffers": "No offers available",
+        "priceNow": "NOW",
+        "moreInfo": "+ info"
     },
     "common": {
         "close": "Close"
@@ -119,6 +122,26 @@
         "fruits": "Fruits",
         "vegetables": "Vegetables",
         "drinks": "Drinks",
-        "cleaning": "Cleaning"
+        "cleaning": "Cleaning",
+        "title": "Offers by Section"
+    },
+    "tab": {
+        "offers": "Offers",
+        "map": "Map",
+        "settings": "Settings"
+    },
+    "mapScreen": {
+        "title": "Map",
+        "QRerror": "Error loading QR",
+        "QRloaded": "QR successfully loaded",
+        "noQR": "No QR provided"
+    },
+    "product": {
+        "title": "Product",
+        "before": "Before",
+        "now": "NOW",
+        "noDescription": "No description available.",
+        "notFound": "Product not found.",
+        "noName": "Product"
     }
 }

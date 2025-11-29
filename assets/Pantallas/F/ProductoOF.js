@@ -1,132 +1,168 @@
 import * as React from 'react';
 import { View, StyleSheet, Image, ScrollView } from 'react-native';
-import { Text, Chip } from 'react-native-paper';
+import { Text, Card, ActivityIndicator } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useRoute } from '@react-navigation/native';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../Resources/firebaseConfig';
+import { useTheme } from '../../Resources/ThemeProvider';
+import CustomAppbar from '../../components/CustomAppbar';
+import { useTranslation } from 'react-i18next';
 
 const ProductoOF = ({ navigation }) => {
-  const [index, setIndex] = React.useState(0);
-  const [routes] = React.useState([
-    { key: 'ofertas', title: 'Ofertas', icon: 'local-offer' },
-    { key: 'mapa', title: 'Mapa', icon: 'map' },
-    { key: 'config', title: 'Configuración', icon: 'settings' },
-  ]);
+  const route = useRoute();
+  const { producto } = route.params;
+  const { id } = producto;
+  const { theme } = useTheme();
+  const { t, i18n } = useTranslation();
 
+  const [item, setItem] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
 
-  // Datos de ejemplo del producto
-  const producto = {
-    nombre: 'Leche LALA',
-    precio: '$45.00',
-    descripcion:
-      'Texto de ejemplo para la descripcion del producto, no se que mas poner pero esto es para que se vea mas lleno y tenga mucho texto Stan LOONA',
-    imagen:
-      'https://www.lala.com.mx/storage/app/media/7501020565935_00.png',
-  };
+  React.useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const docRef = doc(db, 'productos', id);
+        const snap = await getDoc(docRef);
+
+        if (snap.exists()) {
+          const data = snap.data();
+          const lang = i18n.language || 'es';
+
+          setItem({
+            id,
+            nombre: data.nombre?.[lang] || t('product.noName'),
+            precioAntes: data.precio ? `$${data.precio}` : '$0',
+            precioAhora: data.precioOferta ? `$${data.precioOferta}` : '$0',
+            descripcion: data.descripcion?.[lang] || t('product.noDescription'),
+            imagen: data.imagen?.url || null,
+          });
+        } else {
+          console.log("Producto no encontrado");
+        }
+      } catch (e) {
+        console.error("Error obteniendo producto:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [i18n.language]);
+
+  if (loading) {
+    return (
+      <View style={styles.centered}>
+        <ActivityIndicator animating size="large" />
+      </View>
+    );
+  }
+
+  if (!item) {
+    return (
+      <View style={styles.centered}>
+        <Text>{t('product.notFound')}</Text>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      {/* Barra superior */}
-      <View style={styles.chipContainer}>
-        <View style={styles.backButtonContainer}>
-          <MaterialIcons
-            name="arrow-back"
-            size={24}
-            color="white"
-            onPress={() => navigation.goBack()}
-          />
-        </View>
-        <Chip mode="contained" style={styles.chip} textStyle={styles.chipText}>
-          Detalles del Producto
-        </Chip>
-      </View>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <CustomAppbar
+        title={t('product.title')}
+        showBack
+      />
 
-      {/* Contenido principal */}
       <ScrollView contentContainerStyle={styles.content}>
-        <Image source={{ uri: producto.imagen }} style={styles.productImage} />
-        <Text style={styles.productName}>{producto.nombre}</Text>
-        <Text style={styles.productPrice}>{producto.precio}</Text>
-        <Text style={styles.productDescription}>{producto.descripcion}</Text>
-      </ScrollView>
+        {/* Nombre */}
+        <Text style={[styles.productName, { color: theme.colors.text }]}>
+          {item.nombre}
+        </Text>
 
+        {/* Precios */}
+        <Text style={styles.precioAntes}>{t('product.before')}: {item.precioAntes}</Text>
+        <Text style={styles.precioAhora}>{t('product.now')}: {item.precioAhora}</Text>
+
+        {/* Imagen */}
+        {item.imagen ? (
+          <Image source={{ uri: item.imagen }} style={styles.productImage} />
+        ) : (
+          <View style={[styles.productImage, { backgroundColor: '#ccc' }]} />
+        )}
+
+        {/* Descripción */}
+        <Card style={styles.descriptionCard}>
+          <Card.Content>
+            <Text style={[styles.productDescription, { color: theme.colors.text }]}>
+              {item.descripcion}
+            </Text>
+          </Card.Content>
+        </Card>
+
+      </ScrollView>
     </View>
   );
 };
 
+export default ProductoOF;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  chipContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 50,
-    marginHorizontal: 20,
-  },
-  backButtonContainer: {
-    backgroundColor: '#1a94e1',
-    height: 50,
-    width: 50,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  chip: {
-    flex: 1,
-    justifyContent: 'center',
-    borderRadius: 8,
-    height: 50,
-    backgroundColor: '#1a94e1',
-  },
-  chipText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'white',
-    textAlign: 'center',
   },
   content: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 20,
+    paddingBottom: 100,
   },
   productImage: {
-    width: '90%',
-    height: 250,
-    borderRadius: 15,
-    marginBottom: 50,
-    marginTop: 50
+    width: "80%",
+    height: 260,
+    borderRadius: 18,
+    marginVertical: 25,
   },
   productName: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
+    fontSize: 25,
+    fontWeight: "bold",
+    textAlign: "left",
+    alignSelf: "flex-start",
     marginBottom: 8,
+    marginLeft: "5%",
   },
-  productPrice: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#1a94e1',
-    marginBottom: 15,
+  precioAntes: {
+    fontSize: 18,
+    color: "#777",
+    textDecorationLine: "line-through",
+    marginBottom: 4,
+    textAlign: "left",
+    alignSelf: "flex-start",
+    marginLeft: "5%",
+  },
+  precioAhora: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "red",
+    marginBottom: 20,
+    textAlign: "left",
+    alignSelf: "flex-start",
+    marginLeft: "5%",
+  },
+  descriptionCard: {
+    width: "90%",
+    borderRadius: 12,
+    padding: 10,
+    backgroundColor: "#fff",
+    elevation: 3,
+    marginBottom: 20,
   },
   productDescription: {
-    fontSize: 16,
-    color: '#555',
-    textAlign: 'justify',
-    lineHeight: 22,
+    fontSize: 18,
+    textAlign: "justify",
+    lineHeight: 26,
   },
-  bottomNav: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    backgroundColor: '#1a94e1',
-    paddingVertical: 10,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  navIcon: {
-    paddingHorizontal: 10,
+  centered: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
-
-export default ProductoOF;
