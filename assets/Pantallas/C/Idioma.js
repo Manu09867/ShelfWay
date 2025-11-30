@@ -3,25 +3,41 @@ import { View, StyleSheet, Text, SafeAreaView, ScrollView } from 'react-native';
 import { useTheme, RadioButton, Divider } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 
+import { useTranslation } from 'react-i18next';
+
 import CustomAppbar from '../../components/CustomAppbar';
+
 import { useTheme as useAppTheme } from '../../Resources/ThemeProvider'; 
 
 function IdiomaScreen() {
     const paperTheme = useTheme();
-    // ⭐ Extraemos theme, i18n, currentLanguage, y setLanguage
-    const { theme, i18n, currentLanguage, setLanguage } = useAppTheme(); 
+    const { t, i18n } = useTranslation();
+    const { theme } = useAppTheme(); 
 
-    // Estado local para la selección del idioma, sincronizado con el estado global
-    const [checkedLanguage, setCheckedLanguage] = React.useState(currentLanguage || 'ESPAÑOL');
 
-    // Maneja el cambio de selección y actualiza el estado global
-    const handleLanguageChange = (newValue) => {
-        setCheckedLanguage(newValue);
-        // ⭐ LÓGICA ACTIVADA: Llama a la función global para cambiar el idioma
-        setLanguage(newValue); 
+    const getCurrentVisualLanguage = () => {
+        if (!i18n.language) return 'ESPAÑOL'; 
+        return i18n.language.startsWith('en') ? 'ENGLISH' : 'ESPAÑOL';
     };
 
-    // ⭐ Tamaños de fuente basados en theme.baseFontSize
+    // Estado local para la selección visual del RadioButton
+    const [checkedLanguage, setCheckedLanguage] = React.useState(getCurrentVisualLanguage());
+
+    // Sincronizamos el estado local por si el idioma cambia desde otro lugar
+    React.useEffect(() => {
+        setCheckedLanguage(getCurrentVisualLanguage());
+    }, [i18n.language]);
+
+    // Maneja el cambio de selección del usuario
+    const handleLanguageChange = (newValue) => {
+        setCheckedLanguage(newValue);
+        
+
+        const langCode = newValue === 'ENGLISH' ? 'en' : 'es';
+
+        i18n.changeLanguage(langCode); 
+    };
+
     const baseSize = theme.baseFontSize || 16;
     const subtitleSize = baseSize - 2;
     const labelSize = baseSize;
@@ -29,19 +45,18 @@ function IdiomaScreen() {
     return (
         <SafeAreaView style={[styles.safeArea, { backgroundColor: paperTheme.colors.background }]}>
             <StatusBar style="light" backgroundColor={paperTheme.colors.primary} />
-            
-            {/* ⭐ Usamos la cadena traducida para el título */}
-            <CustomAppbar title={i18n.header_title_language} />
+
+            <CustomAppbar title={t('languageScreen.header_title_language')} />
 
             <ScrollView contentContainerStyle={styles.scrollContent} style={styles.scrollView}>
                 <View style={styles.sectionContainer}>
-                    
-                    {/* ⭐ CAMBIO: Texto de descripción alineado al centro */}
+
                     <Text style={[styles.descriptionText, { 
                         color: paperTheme.colors.onSurfaceVariant,
                         fontSize: subtitleSize
                     }]}>
-                        {i18n.language_description}
+
+                        {t('languageScreen.language_description')}
                     </Text>
                     <Divider style={styles.divider} />
 
@@ -91,7 +106,7 @@ const styles = StyleSheet.create({
     },
     descriptionText: {
         marginBottom: 15,
-        textAlign: 'center', // Alineación central
+        textAlign: 'center', 
     },
     divider: {
         marginVertical: 10,
@@ -106,7 +121,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     radioButtonLabel: {
-        // La fuente se define dinámicamente
+       
     },
 });
 

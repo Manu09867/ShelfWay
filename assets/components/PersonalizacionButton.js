@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { StyleSheet, Dimensions } from 'react-native'; // Importar Dimensions
+import { StyleSheet, Dimensions } from 'react-native'; 
 import { Button, useTheme } from 'react-native-paper';
 
 export default function PersonalizacionButton({ title, iconName, onPress }) {
     const theme = useTheme();
     
-    // ⭐ Obtener dimensiones para adaptabilidad del texto
+
     const { width, height } = Dimensions.get('window');
     const isPortrait = height >= width;
 
@@ -15,7 +15,7 @@ export default function PersonalizacionButton({ title, iconName, onPress }) {
             onPress={onPress}
             icon={iconName}
             contentStyle={styles.buttonContent}
-            // ⭐ Usar estilo condicional para la etiqueta
+
             labelStyle={[
                 styles.buttonLabel, 
                 isPortrait ? styles.labelPortrait : styles.labelLandscape
@@ -40,14 +40,14 @@ const styles = StyleSheet.create({
     buttonLabel: {
         color: 'white',   
         fontWeight: 'bold',
-        // El tamaño de la fuente se define condicionalmente
+
     },
-    // ⭐ Estilo para orientación Vertical (mayor tamaño de fuente)
+
     labelPortrait: {
         fontSize: 18, 
     },
-    // ⭐ Estilo para orientación Horizontal (menor tamaño de fuente)
+
     labelLandscape: {
-        fontSize: 16, // Reducir ligeramente el tamaño para evitar desbordamiento
+        fontSize: 16, 
     },
 });
