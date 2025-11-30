@@ -91,7 +91,11 @@ export default function ProductsScreen({ route }) {
     }, [searchQuery, currentLang, barcode]);
 
     const hasOffer = product =>
-        typeof product?.priceOffer === "number" && product.priceOffer > 0;
+        product?.oferta === true &&
+        typeof product?.priceOffer === "number" &&
+        product.priceOffer > 0 &&
+        product.priceOffer < product.price;
+
 
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
