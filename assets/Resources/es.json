@@ -109,5 +109,48 @@
             "next": "Siguiente",
             "finish": "Finalizar"
         }
+    },
+    "languageScreen": {
+        "header_title_language": "Idioma",
+        "language_description": "Selecciona el idioma de la aplicación"
+    },
+    "notificationsScreen": {
+        "title": "Notificaciones",
+        "warning": "Habilita los permisos para recibir notificaciones.",
+        "description": "Gestiona las alertas que deseas recibir.",
+        "offers": "Ofertas",
+        "events": "Eventos",
+        "products": "Productos"
+    },
+    "preferencesScreen": {
+        "header_title_preferences": "Preferencias",
+        "theme_title": "Tema",
+        "theme_description": "Personaliza el aspecto de la aplicación",
+        "theme_light": "Claro",
+        "theme_dark": "Oscuro"
+    },
+    "reportScreen": {
+        "header_title": "REPORTE",
+        "error_complete_fields": "Por favor completa todos los campos requeridos.",
+        "help_title": "¿Necesitas ayuda?",
+        "description": "Completa tu reporte aquí para poder brindarte atención personalizada.",
+        "name_label": "Nombre:",
+        "name_placeholder": "Ingresa tu nombre",
+        "lastname_label": "Apellidos:",
+        "lastname_placeholder": "Ingresa tus apellidos",
+        "email_label": "Correo electrónico:",
+        "email_placeholder": "Ingresa tu correo electrónico",
+        "problem_label": "Describe a continuación tu problema:",
+        "button_send": "ENVIAR",
+        "dialog_title": "REPORTE RECIBIDO",
+        "dialog_part1": "Nos pondremos en contacto contigo a través de ",
+        "dialog_part2": ".",
+        "button_ok": "OK"
+    },
+    "customizationScreen": {
+        "title": "Personalización",
+        "btn_preferences": "Preferencias",
+        "btn_notifications": "Notificaciones",
+        "btn_language": "Idioma"
     }
 }

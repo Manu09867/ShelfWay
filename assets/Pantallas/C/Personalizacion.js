@@ -3,6 +3,9 @@ import { View, StyleSheet, SafeAreaView } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 
+
+import { useTranslation } from 'react-i18next';
+
 import CustomAppbar from '../../components/CustomAppbar';
 import PersonalizacionButton from '../../components/PersonalizacionButton'; 
 import { useNavigation } from '@react-navigation/native';
@@ -10,7 +13,12 @@ import { useTheme as useAppTheme } from '../../Resources/ThemeProvider';
 
 function PersonalizacionScreen() {
     const paperTheme = useTheme(); 
-    const { theme, i18n } = useAppTheme(); 
+    
+
+    const { t } = useTranslation();
+
+
+    const { theme } = useAppTheme(); 
     const navigation = useNavigation();
 
     // --- Navegación ---
@@ -25,22 +33,25 @@ function PersonalizacionScreen() {
         <SafeAreaView style={[styles.safeArea, { backgroundColor: paperTheme.colors.background }]}>
             <StatusBar style="light" backgroundColor={paperTheme.colors.primary} />
             
-            {/* 🔹 Cambiado a "Personalización" */}
-            <CustomAppbar title="Personalización" />
+            {/* Título de la pantalla */}
+            <CustomAppbar title={t('customizationScreen.title')} />
 
             <View style={styles.contentContainer}> 
                 <PersonalizacionButton
-                    title={i18n.header_title_preferences}
+                    // ⭐ Usamos la nueva clave específica para el botón Preferencias
+                    title={t('customizationScreen.btn_preferences')}
                     iconName="tune"
                     onPress={goToPreferencias}
                 />
                 <PersonalizacionButton
-                    title={i18n.header_title_notifications}
+                    // ⭐ Usamos la nueva clave específica para el botón Notificaciones
+                    title={t('customizationScreen.btn_notifications')}
                     iconName="bell-outline"
                     onPress={goToNotificaciones}
                 />
                 <PersonalizacionButton
-                    title={i18n.header_title_language}
+                    // ⭐ Usamos la nueva clave específica para el botón Idioma
+                    title={t('customizationScreen.btn_language')}
                     iconName="web"
                     onPress={goToIdioma}
                 />
