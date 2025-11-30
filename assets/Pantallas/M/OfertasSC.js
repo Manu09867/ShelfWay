@@ -30,20 +30,17 @@ const OfertasScreen = ({ navigation }) => {
                     const data = doc.data();
                     return {
                         ...data,
-                        // Usar la traducción del nombre si está disponible
                         nombreTraducido: data.nombre?.[currentLang] || data.nombre?.es || ''
                     };
                 });
 
                 const nuevaLista = anaqueles.map(a => {
-                    // Función para quitar acentos
                     const normalizar = (str) =>
                         str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
                     const cantidad = productos.filter(p => {
                         if (!p.oferta || !p.tags?.es) return false;
 
-                        // Normalizamos todo
                         const tagsNorm = p.tags.es.map(t => normalizar(t));
                         const tagAnaquel = normalizar(a.tag);
 
@@ -61,9 +58,8 @@ const OfertasScreen = ({ navigation }) => {
         };
 
         cargarOfertas();
-    }, [currentLang]); // Agregar currentLang como dependencia
+    }, [currentLang]);
 
-    // Función para obtener el nombre traducido de la categoría
     const getTranslatedCategoryName = (categoryName) => {
         const translations = {
             'Lácteos': t('categories.dairy', 'Lácteos'),
@@ -109,7 +105,6 @@ const OfertasScreen = ({ navigation }) => {
                                 {getTranslatedCategoryName(anaquel.nombre)}
                             </Text>
 
-                            {/* 🔴 BADGE DE NOTIFICACIONES */}
                             {anaquel.notificaciones > 0 && (
                                 <View
                                     style={[

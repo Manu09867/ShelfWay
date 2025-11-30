@@ -23,14 +23,13 @@ export default function ProductosPorCategoria({ route }) {
     const [loading, setLoading] = useState(true);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
-    // Función para obtener el nombre traducido de la categoría
     const getTranslatedCategoryName = (categoryName) => {
         const translations = {
             'Lácteos': t('categories.dairy', 'Lácteos'),
             'Carnes': t('categories.meat', 'Carnes'),
             'Frutas': t('categories.fruits', 'Frutas'),
             'Verduras': t('categories.vegetables', 'Verduras'),
-            'Bebidas': t('categories.drinks', 'Bebidas'), // Cambiado de beverages a drinks
+            'Bebidas': t('categories.drinks', 'Bebidas'),
             'Limpieza': t('categories.cleaning', 'Limpieza')
         };
         return translations[categoryName] || categoryName;
@@ -58,19 +57,19 @@ export default function ProductosPorCategoria({ route }) {
                         image: data.imagen?.url || null,
                         price: data.precio || 0,
                         priceOffer: data.precioOferta || 0,
-                        offer: data.oferta === true, // ← IMPORTANTE
+                        offer: data.oferta === true,
                         stock: data.stock ?? true,
                         anaquel: data.anaquel || "",
                     };
                 });
 
-                // ORDENAR PRODUCTOS: Primero los en oferta, luego alfabéticamente
+
                 const productosOrdenados = lista.sort((a, b) => {
-                    // Primero comparar por oferta (los en oferta primero)
+
                     if (a.offer && !b.offer) return -1;
                     if (!a.offer && b.offer) return 1;
 
-                    // Si ambos tienen o no tienen oferta, ordenar alfabéticamente por nombre
+
                     return a.nombre.localeCompare(b.nombre);
                 });
 
@@ -85,7 +84,7 @@ export default function ProductosPorCategoria({ route }) {
         cargarProductos();
     }, [categoria, currentLang]);
 
-    const hasOffer = p => p?.offer === true; // ← NUEVA LÓGICA
+    const hasOffer = p => p?.offer === true;
 
     if (loading) {
         return (
@@ -99,7 +98,7 @@ export default function ProductosPorCategoria({ route }) {
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
             <StatusBar style={isDarkTheme ? 'light' : 'dark'} />
 
-            {/* HEADER */}
+
             <View style={styles.header}>
                 <IconButton icon="arrow-left" size={28} onPress={() => navigation.goBack()} />
                 <Text style={[styles.headerText, { color: colors.text }]}>
@@ -107,7 +106,7 @@ export default function ProductosPorCategoria({ route }) {
                 </Text>
             </View>
 
-            {/* LISTA DE PRODUCTOS */}
+
             <FlatList
                 data={productos}
                 keyExtractor={item => item.id}
@@ -156,7 +155,7 @@ export default function ProductosPorCategoria({ route }) {
                 )}
             />
 
-            {/* DIALOG INFO */}
+
             <Portal>
                 <Dialog
                     visible={!!selectedProduct}

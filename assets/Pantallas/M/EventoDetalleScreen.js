@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, TouchableOpacity, Image, useWindowDimensi
 import { Text, Chip, Button, Divider, useTheme } from 'react-native-paper';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next'; 
 
 const EventoDetalleScreen = ({ navigation }) => {
     const theme = useTheme();
@@ -10,14 +11,21 @@ const EventoDetalleScreen = ({ navigation }) => {
     const { width, height } = useWindowDimensions();
     const isLandscape = width > height;
     const { evento } = route.params;
+    const { t, i18n } = useTranslation(); 
+    const currentLang = i18n.language || 'es';
 
-    // Función para formatear fechas
+    
+    const getTranslatedText = (textObject) => {
+        if (!textObject) return '';
+        return textObject[currentLang] || textObject.es || '';
+    };
+
     const formatearFecha = (fechaString) => {
-        if (!fechaString) return "Fecha no especificada";
+        if (!fechaString) return t('eventDetail.unspecifiedDate', 'Fecha no especificada');
 
         try {
             const fecha = new Date(fechaString);
-            return fecha.toLocaleDateString('es-ES', {
+            return fecha.toLocaleDateString(currentLang === 'en' ? 'en-US' : 'es-ES', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
@@ -27,7 +35,6 @@ const EventoDetalleScreen = ({ navigation }) => {
         }
     };
 
-    // Función para obtener el ícono según el tipo de evento
     const obtenerIcono = (titulo) => {
         const tituloLower = titulo?.toLowerCase() || '';
 
@@ -44,7 +51,6 @@ const EventoDetalleScreen = ({ navigation }) => {
         }
     };
 
-    // Función para extraer promociones de la descripción
     const extraerPromociones = (descripcion) => {
         if (!descripcion) return [];
 
@@ -57,12 +63,11 @@ const EventoDetalleScreen = ({ navigation }) => {
         );
     };
 
-    const promociones = extraerPromociones(evento.descripcion?.es);
+    const promociones = extraerPromociones(getTranslatedText(evento.descripcion));
 
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
 
-            {/* Header */}
             <View style={[
                 styles.header, 
                 { backgroundColor: theme.colors.surface },
@@ -87,7 +92,7 @@ const EventoDetalleScreen = ({ navigation }) => {
                         isLandscape && styles.chipTextLandscape
                     ]}
                 >
-                    {evento.titulo?.es || "Evento"}
+                    {getTranslatedText(evento.titulo) || t('eventDetail.event', 'Evento')}
                 </Chip>
             </View>
 
@@ -98,9 +103,7 @@ const EventoDetalleScreen = ({ navigation }) => {
             >
 
                 {isLandscape ? (
-                    // DISEÑO HORIZONTAL
                     <View style={styles.landscapeContainer}>
-                        {/* Columna izquierda - Imagen */}
                         <View style={styles.landscapeImageContainer}>
                             {evento.imagenUrl ? (
                                 <Image
@@ -111,27 +114,25 @@ const EventoDetalleScreen = ({ navigation }) => {
                             ) : (
                                 <View style={[styles.landscapePlaceholder, { backgroundColor: theme.colors.surface }]}>
                                     <MaterialCommunityIcons
-                                        name={obtenerIcono(evento.titulo?.es)}
+                                        name={obtenerIcono(getTranslatedText(evento.titulo))}
                                         size={80}
                                         color={theme.colors.primary}
                                     />
                                     <Text style={[styles.placeholderText, { color: theme.colors.text }]}>
-                                        Imagen del evento
+                                        {t('eventDetail.eventImage', 'Imagen del evento')}
                                     </Text>
                                 </View>
                             )}
                         </View>
 
-                        {/* Columna derecha - Contenido */}
                         <View style={styles.landscapeContent}>
                             <Text style={[styles.landscapeTitle, { color: theme.colors.primary }]}>
-                                {evento.titulo?.es || "Evento sin título"}
+                                {getTranslatedText(evento.titulo) || t('eventDetail.untitledEvent', 'Evento sin título')}
                             </Text>
                             <Text style={[styles.landscapeSubtitle, { color: theme.colors.text }]}>
                                 {formatearFecha(evento.fechaInicio)} - {formatearFecha(evento.fechaFin)}
                             </Text>
 
-                            {/* Detalles en grid para horizontal */}
                             <View style={styles.landscapeGrid}>
                                 <View style={[styles.gridItem, { backgroundColor: theme.colors.surface }]}>
                                     <MaterialCommunityIcons
@@ -140,44 +141,42 @@ const EventoDetalleScreen = ({ navigation }) => {
                                         color={theme.colors.primary}
                                     />
                                     <Text style={[styles.gridText, { color: theme.colors.text }]}>
-                                        Del {formatearFecha(evento.fechaInicio)}
+                                        {t('eventDetail.fromDate', 'Del')} {formatearFecha(evento.fechaInicio)}
                                     </Text>
                                     <Text style={[styles.gridSubtext, { color: theme.colors.text }]}>
-                                        Al {formatearFecha(evento.fechaFin)}
+                                        {t('eventDetail.toDate', 'Al')} {formatearFecha(evento.fechaFin)}
                                     </Text>
                                 </View>
 
                                 <View style={[styles.gridItem, { backgroundColor: theme.colors.surface }]}>
                                     <MaterialCommunityIcons
-                                        name={obtenerIcono(evento.titulo?.es)}
+                                        name={obtenerIcono(getTranslatedText(evento.titulo))}
                                         size={24}
                                         color={theme.colors.primary}
                                     />
                                     <Text style={[styles.gridText, { color: theme.colors.text }]}>
-                                        Tipo de Evento
+                                        {t('eventDetail.eventType', 'Tipo de Evento')}
                                     </Text>
                                     <Text style={[styles.gridSubtext, { color: theme.colors.text }]}>
-                                        {evento.titulo?.es || "Especial"}
+                                        {getTranslatedText(evento.titulo) || t('eventDetail.special', 'Especial')}
                                     </Text>
                                 </View>
                             </View>
 
                             <Divider style={[styles.divider, { backgroundColor: theme.colors.outline }]} />
 
-                            {/* Descripción */}
                             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-                                Sobre el Evento
+                                {t('eventDetail.aboutEvent', 'Sobre el Evento')}
                             </Text>
                             <Text style={[styles.landscapeDescription, { color: theme.colors.text }]}>
-                                {evento.descripcion?.es || "Descripción no disponible para este evento."}
+                                {getTranslatedText(evento.descripcion) || t('eventDetail.noDescription', 'Descripción no disponible para este evento.')}
                             </Text>
 
-                            {/* Promociones en horizontal */}
                             {promociones.length > 0 && (
                                 <>
                                     <Divider style={[styles.divider, { backgroundColor: theme.colors.outline }]} />
                                     <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-                                        Promociones Destacadas
+                                        {t('eventDetail.featuredPromotions', 'Promociones Destacadas')}
                                     </Text>
                                     <View style={styles.landscapePromotions}>
                                         {promociones.map((promo, index) => (
@@ -196,25 +195,20 @@ const EventoDetalleScreen = ({ navigation }) => {
                                 </>
                             )}
 
-                            {/* Términos y condiciones en horizontal */}
                             <Divider style={[styles.divider, { backgroundColor: theme.colors.outline }]} />
                             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-                                Términos y Condiciones
+                                {t('eventDetail.termsAndConditions', 'Términos y Condiciones')}
                             </Text>
                             <View style={[styles.landscapeTerms, { backgroundColor: theme.colors.surface }]}>
                                 <Text style={[styles.terms, { color: theme.colors.text }]}>
-                                    • Promociones válidas durante las fechas del evento{"\n"}
-                                    • No acumulable con otras promociones{"\n"}
-                                    • Productos sujetos a disponibilidad{"\n"}
-                                    • Precios pueden variar sin previo aviso{"\n"}
-                                    • El supermercado se reserva el derecho de modificar las promociones
+                                    {t('eventDetail.termsList', 
+                                        '• Promociones válidas durante las fechas del evento\n• No acumulable con otras promociones\n• Productos sujetos a disponibilidad\n• Precios pueden variar sin previo aviso\n• El supermercado se reserva el derecho de modificar las promociones'
+                                    )}
                                 </Text>
                             </View>
-
                         </View>
                     </View>
                 ) : (
-                    // DISEÑO VERTICAL (original mejorado)
                     <>
                         {evento.imagenUrl ? (
                             <Image
@@ -225,25 +219,24 @@ const EventoDetalleScreen = ({ navigation }) => {
                         ) : (
                             <View style={[styles.placeholderImage, { backgroundColor: theme.colors.surface }]}>
                                 <MaterialCommunityIcons
-                                    name={obtenerIcono(evento.titulo?.es)}
+                                    name={obtenerIcono(getTranslatedText(evento.titulo))}
                                     size={60}
                                     color={theme.colors.primary}
                                 />
                                 <Text style={[styles.placeholderText, { color: theme.colors.text }]}>
-                                    Imagen del evento
+                                    {t('eventDetail.eventImage', 'Imagen del evento')}
                                 </Text>
                             </View>
                         )}
 
                         <View style={styles.content}>
                             <Text style={[styles.title, { color: theme.colors.primary }]}>
-                                {evento.titulo?.es || "Evento sin título"}
+                                {getTranslatedText(evento.titulo) || t('eventDetail.untitledEvent', 'Evento sin título')}
                             </Text>
                             <Text style={[styles.subtitle, { color: theme.colors.text }]}>
                                 {formatearFecha(evento.fechaInicio)} - {formatearFecha(evento.fechaFin)}
                             </Text>
 
-                            {/* Detalles del evento */}
                             <View style={[styles.detailsContainer, { backgroundColor: theme.colors.surface }]}>
                                 <View style={styles.detailItem}>
                                     <MaterialCommunityIcons
@@ -257,12 +250,12 @@ const EventoDetalleScreen = ({ navigation }) => {
                                 </View>
                                 <View style={styles.detailItem}>
                                     <MaterialCommunityIcons
-                                        name={obtenerIcono(evento.titulo?.es)}
+                                        name={obtenerIcono(getTranslatedText(evento.titulo))}
                                         size={20}
                                         color={theme.colors.primary}
                                     />
                                     <Text style={[styles.detailText, { color: theme.colors.text }]}>
-                                        {evento.titulo?.es || "Evento especial"}
+                                        {getTranslatedText(evento.titulo) || t('eventDetail.specialEvent', 'Evento especial')}
                                     </Text>
                                 </View>
                                 <View style={styles.detailItem}>
@@ -272,27 +265,25 @@ const EventoDetalleScreen = ({ navigation }) => {
                                         color={theme.colors.primary}
                                     />
                                     <Text style={[styles.detailText, { color: theme.colors.text }]}>
-                                        Horario normal de tienda
+                                        {t('eventDetail.storeHours', 'Horario normal de tienda')}
                                     </Text>
                                 </View>
                             </View>
 
                             <Divider style={[styles.divider, { backgroundColor: theme.colors.outline }]} />
 
-                            {/* Descripción */}
                             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-                                Sobre el Evento
+                                {t('eventDetail.aboutEvent', 'Sobre el Evento')}
                             </Text>
                             <Text style={[styles.description, { color: theme.colors.text }]}>
-                                {evento.descripcion?.es || "Descripción no disponible para este evento."}
+                                {getTranslatedText(evento.descripcion) || t('eventDetail.noDescription', 'Descripción no disponible para este evento.')}
                             </Text>
 
-                            {/* Promociones si existen */}
                             {promociones.length > 0 && (
                                 <>
                                     <Divider style={[styles.divider, { backgroundColor: theme.colors.outline }]} />
                                     <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-                                        Promociones Destacadas
+                                        {t('eventDetail.featuredPromotions', 'Promociones Destacadas')}
                                     </Text>
                                     <View style={[styles.offerList, { backgroundColor: theme.colors.surface }]}>
                                         {promociones.map((promo, index) => (
@@ -313,16 +304,13 @@ const EventoDetalleScreen = ({ navigation }) => {
 
                             <Divider style={[styles.divider, { backgroundColor: theme.colors.outline }]} />
 
-                            {/* Términos y condiciones */}
                             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
-                                Términos y Condiciones
+                                {t('eventDetail.termsAndConditions', 'Términos y Condiciones')}
                             </Text>
                             <Text style={[styles.terms, { color: theme.colors.text }]}>
-                                • Promociones válidas durante las fechas del evento{"\n"}
-                                • No acumulable con otras promociones{"\n"}
-                                • Productos sujetos a disponibilidad{"\n"}
-                                • Precios pueden variar sin previo aviso{"\n"}
-                                • El supermercado se reserva el derecho de modificar las promociones
+                                {t('eventDetail.termsList', 
+                                    '• Promociones válidas durante las fechas del evento\n• No acumulable con otras promociones\n• Productos sujetos a disponibilidad\n• Precios pueden variar sin previo aviso\n• El supermercado se reserva el derecho de modificar las promociones'
+                                )}
                             </Text>
                         </View>
                     </>
@@ -332,6 +320,7 @@ const EventoDetalleScreen = ({ navigation }) => {
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -379,8 +368,6 @@ const styles = StyleSheet.create({
     scrollContentLandscape: {
         paddingBottom: 30,
     },
-    
-    // ESTILOS VERTICALES
     mainImage: {
         width: '100%',
         height: 250,
@@ -422,8 +409,6 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         flex: 1,
     },
-    
-    // ESTILOS HORIZONTALES
     landscapeContainer: {
         flexDirection: 'row',
         minHeight: 600,
@@ -515,8 +500,6 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         elevation: 2,
     },
-    
-    // ESTILOS COMPARTIDOS
     divider: {
         marginVertical: 20,
     },

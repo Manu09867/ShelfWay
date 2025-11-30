@@ -5,7 +5,7 @@ import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const Aviso2Screen = ({ navigation }) => (
     <View style={styles.container}>
-        {/* Header*/}
+        
         <View style={styles.header}>
             <TouchableOpacity
                 style={styles.backButton}

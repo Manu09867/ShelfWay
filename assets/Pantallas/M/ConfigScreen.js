@@ -2,11 +2,13 @@ import * as React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Button, Chip, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next'; 
 
 const ConfigScreen = () => {
     const [screenDimensions, setScreenDimensions] = React.useState(Dimensions.get('window'));
     const navigation = useNavigation();
-    const paperTheme = useTheme(); // <-- Tema dinámico (light/dark)
+    const paperTheme = useTheme();
+    const { t } = useTranslation(); 
 
     React.useEffect(() => {
         const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -26,7 +28,7 @@ const ConfigScreen = () => {
                 isLandscape && styles.containerLandscape
             ]}
         >
-            {/* Chip con colores del tema */}
+            {/* Chip con colores del tema y traducción */}
             <Chip
                 mode="contained"
                 style={[
@@ -39,7 +41,7 @@ const ConfigScreen = () => {
                     { color: paperTheme.colors.onPrimary }
                 ]}
             >
-                Configuración
+                {t('tab.settings', 'Configuración')} {/* <-- Agregar traducción */}
             </Chip>
 
             <View style={[styles.buttonsContainer, isLandscape && styles.buttonsContainerLandscape]}>
@@ -50,7 +52,7 @@ const ConfigScreen = () => {
                     style={[styles.button, isLandscape && styles.buttonLandscape]}
                     contentStyle={styles.buttonContent}
                 >
-                    Avisos
+                    {t('configScreen.events', 'Avisos')} {/* <-- Agregar traducción */}
                 </Button>
 
                 <Button
@@ -60,7 +62,7 @@ const ConfigScreen = () => {
                     style={[styles.button, isLandscape && styles.buttonLandscape]}
                     contentStyle={styles.buttonContent}
                 >
-                    Reporte
+                    {t('configScreen.report', 'Reporte')} {/* <-- Agregar traducción */}
                 </Button>
 
                 <Button
@@ -70,7 +72,7 @@ const ConfigScreen = () => {
                     style={[styles.button, isLandscape && styles.buttonLandscape]}
                     contentStyle={styles.buttonContent}
                 >
-                    Personalización
+                    {t('configScreen.customization', 'Personalización')} {/* <-- Agregar traducción */}
                 </Button>
             </View>
         </View>

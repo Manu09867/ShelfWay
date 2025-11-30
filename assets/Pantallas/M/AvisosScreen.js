@@ -3,17 +3,19 @@ import { View, StyleSheet, ScrollView, TouchableOpacity, useWindowDimensions } f
 import { Avatar, Button, Card, Text, Chip, useTheme } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
-import { db } from '../../Resources/firebaseConfig'; // Ajusta la ruta según tu configuración
+import { db } from '../../Resources/firebaseConfig';
+import { useTranslation } from 'react-i18next';
 
 const AvisosScreen = ({ navigation }) => {
     const theme = useTheme();
     const { width, height } = useWindowDimensions();
     const isLandscape = width > height;
+    const { t, i18n } = useTranslation();
+    const currentLang = i18n.language || 'es';
 
     const [eventos, setEventos] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
 
-    // Cargar eventos desde Firebase
     React.useEffect(() => {
         const cargarEventos = async () => {
             try {
@@ -27,7 +29,6 @@ const AvisosScreen = ({ navigation }) => {
                     ...doc.data()
                 }));
 
-                // Filtrar solo eventos activos
                 const eventosActivos = eventosData.filter(evento => evento.activo === true);
                 setEventos(eventosActivos);
             } catch (error) {
@@ -40,13 +41,18 @@ const AvisosScreen = ({ navigation }) => {
         cargarEventos();
     }, []);
 
-    // Función para formatear fechas
+    
+    const getTranslatedText = (textObject) => {
+        if (!textObject) return '';
+        return textObject[currentLang] || textObject.es || '';
+    };
+
     const formatearFecha = (fechaString) => {
-        if (!fechaString) return "Fecha no especificada";
+        if (!fechaString) return t('avisosScreen.unspecifiedDate', 'Fecha no especificada');
 
         try {
             const fecha = new Date(fechaString);
-            return fecha.toLocaleDateString('es-ES', {
+            return fecha.toLocaleDateString(currentLang === 'en' ? 'en-US' : 'es-ES', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric'
@@ -56,7 +62,6 @@ const AvisosScreen = ({ navigation }) => {
         }
     };
 
-    // Función para obtener el ícono según el tipo de evento
     const obtenerIcono = (titulo) => {
         const tituloLower = titulo?.toLowerCase() || '';
 
@@ -73,7 +78,6 @@ const AvisosScreen = ({ navigation }) => {
         }
     };
 
-    // Función para navegar al detalle del evento
     const navegarADetalleEvento = (evento) => {
         navigation.navigate('EventoDetalle', { evento });
     };
@@ -98,11 +102,13 @@ const AvisosScreen = ({ navigation }) => {
                         style={[styles.chip, { backgroundColor: theme.colors.primary }]}
                         textStyle={[styles.chipText, { color: theme.colors.onPrimary }]}
                     >
-                        Avisos del Supermercado
+                        {t('avisosScreen.supermarketEvents', 'Avisos del Supermercado')}
                     </Chip>
                 </View>
                 <View style={styles.loadingContainer}>
-                    <Text style={{ color: theme.colors.text }}>Cargando eventos...</Text>
+                    <Text style={{ color: theme.colors.text }}>
+                        {t('avisosScreen.loadingEvents', 'Cargando eventos...')}
+                    </Text>
                 </View>
             </View>
         );
@@ -111,7 +117,6 @@ const AvisosScreen = ({ navigation }) => {
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
 
-            {/* Chip + regresar */}
             <View style={[
                 styles.chipContainer,
                 isLandscape && styles.chipContainerLandscape
@@ -144,7 +149,7 @@ const AvisosScreen = ({ navigation }) => {
                         isLandscape && styles.chipTextLandscape
                     ]}
                 >
-                    Avisos del Supermercado ({eventos.length})
+                    {t('avisosScreen.supermarketEventsWithCount', 'Avisos del Supermercado')} ({eventos.length})
                 </Chip>
             </View>
 
@@ -159,7 +164,7 @@ const AvisosScreen = ({ navigation }) => {
                 {eventos.length === 0 ? (
                     <View style={styles.emptyContainer}>
                         <Text style={{ color: theme.colors.text, fontSize: 16, textAlign: 'center' }}>
-                            No hay eventos activos en este momento
+                            {t('avisosScreen.noActiveEvents', 'No hay eventos activos en este momento')}
                         </Text>
                     </View>
                 ) : (
@@ -175,7 +180,7 @@ const AvisosScreen = ({ navigation }) => {
                             <View style={isLandscape && styles.cardContentLandscape}>
                                 <View style={isLandscape && styles.cardTextContainer}>
                                     <Card.Title
-                                        title={evento.titulo?.es || "Evento sin título"}
+                                        title={getTranslatedText(evento.titulo) || t('avisosScreen.untitledEvent', 'Evento sin título')}
                                         subtitle={`${formatearFecha(evento.fechaInicio)} - ${formatearFecha(evento.fechaFin)}`}
                                         titleStyle={[
                                             { color: theme.colors.onPrimary },
@@ -188,7 +193,7 @@ const AvisosScreen = ({ navigation }) => {
                                         left={props => (
                                             <Avatar.Icon
                                                 {...props}
-                                                icon={obtenerIcono(evento.titulo?.es)}
+                                                icon={obtenerIcono(getTranslatedText(evento.titulo))}
                                                 color={theme.colors.onPrimary}
                                                 style={{ backgroundColor: 'transparent' }}
                                                 size={isLandscape ? 50 : 40}
@@ -204,7 +209,7 @@ const AvisosScreen = ({ navigation }) => {
                                                 isLandscape && styles.contentTitleLandscape
                                             ]}
                                         >
-                                            {evento.titulo?.es || "Evento sin título"}
+                                            {getTranslatedText(evento.titulo) || t('avisosScreen.untitledEvent', 'Evento sin título')}
                                         </Text>
 
                                         <Text
@@ -214,7 +219,7 @@ const AvisosScreen = ({ navigation }) => {
                                                 isLandscape && styles.contentTextLandscape
                                             ]}
                                         >
-                                            {evento.descripcion?.es || "Descripción no disponible"}
+                                            {getTranslatedText(evento.descripcion) || t('avisosScreen.noDescription', 'Descripción no disponible')}
                                         </Text>
                                     </Card.Content>
 
@@ -228,7 +233,7 @@ const AvisosScreen = ({ navigation }) => {
                                                 isLandscape && styles.buttonLandscape
                                             ]}
                                         >
-                                            Ver Evento
+                                            {t('avisosScreen.viewEvent', 'Ver Evento')}
                                         </Button>
                                     </Card.Actions>
                                 </View>

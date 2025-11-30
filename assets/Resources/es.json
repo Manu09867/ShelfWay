@@ -143,5 +143,38 @@
         "noDescription": "Sin descripción disponible.",
         "notFound": "No se encontró el producto.",
         "noName": "Producto"
+    },
+    "configScreen": {
+        "notices": "Avisos",
+        "report": "Reporte",
+        "customization": "Personalización"
+    },
+    "avisosScreen": {
+        "supermarketEvents": "Avisos del Supermercado",
+        "supermarketEventsWithCount": "Avisos del Supermercado",
+        "loadingEvents": "Cargando eventos...",
+        "noActiveEvents": "No hay eventos activos en este momento",
+        "untitledEvent": "Evento sin título",
+        "noDescription": "Descripción no disponible",
+        "viewEvent": "Ver Evento",
+        "unspecifiedDate": "Fecha no especificada"
+    },
+    "eventDetail": {
+        "event": "Evento",
+        "untitledEvent": "Evento sin título",
+        "eventImage": "Imagen del evento",
+        "unspecifiedDate": "Fecha no especificada",
+        "fromDate": "Del",
+        "toDate": "Al",
+        "eventType": "Tipo de Evento",
+        "special": "Especial",
+        "specialEvent": "Evento especial",
+        "storeHours": "Horario normal de tienda",
+        "aboutEvent": "Sobre el Evento",
+        "noDescription": "Descripción no disponible para este evento.",
+        "featuredPromotions": "Promociones Destacadas",
+        "termsAndConditions": "Términos y Condiciones",
+        "termsList": "• Promociones válidas durante las fechas del evento\n• No acumulable con otras promociones\n• Productos sujetos a disponibilidad\n• Precios pueden variar sin previo aviso\n• El supermercado se reserva el derecho de modificar las promociones"
     }
+    
 }
