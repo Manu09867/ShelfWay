@@ -114,7 +114,8 @@
         }
     },
     "offersScreen": {
-        "shelvesWithOffers": "Shelves with Offers"
+        "shelvesWithOffers": "Shelves with Offers",
+        "title": "Offers by Section"
     },
     "categories": {
         "dairy": "Dairy",
@@ -123,5 +124,99 @@
         "vegetables": "Vegetables",
         "drinks": "Drinks",
         "cleaning": "Cleaning"
+    },
+    "tab": {
+        "offers": "Offers",
+        "map": "Map",
+        "settings": "Settings"
+    },
+    "mapScreen": {
+        "title": "Map",
+        "QRerror": "Error loading QR",
+        "QRloaded": "QR successfully loaded",
+        "noQR": "No QR provided"
+    },
+    "product": {
+        "title": "Product",
+        "before": "Before",
+        "now": "NOW",
+        "noDescription": "No description available.",
+        "notFound": "Product not found.",
+        "noName": "Product"
+    },
+    "configScreen": {
+        "events": "Events",
+        "report": "Report",
+        "customization": "Customization"
+    },
+    "avisosScreen": {
+        "supermarketEvents": "Supermarket Events",
+        "supermarketEventsWithCount": "Supermarket Events",
+        "loadingEvents": "Loading events...",
+        "noActiveEvents": "No active events at the moment",
+        "untitledEvent": "Untitled event",
+        "noDescription": "Description not available",
+        "viewEvent": "View Event",
+        "unspecifiedDate": "Date not specified"
+    },
+    "eventDetail": {
+        "event": "Event",
+        "untitledEvent": "Untitled event",
+        "eventImage": "Event image",
+        "unspecifiedDate": "Date not specified",
+        "fromDate": "From",
+        "toDate": "To",
+        "eventType": "Event Type",
+        "special": "Special",
+        "specialEvent": "Special event",
+        "storeHours": "Normal store hours",
+        "aboutEvent": "About the Event",
+        "noDescription": "Description not available for this event.",
+        "featuredPromotions": "Featured Promotions",
+        "termsAndConditions": "Terms and Conditions",
+        "termsList": "• Promotions valid during event dates\n• Not combinable with other promotions\n• Products subject to availability\n• Prices may change without notice\n• The supermarket reserves the right to modify promotions"
+    },
+    "languageScreen": {
+        "header_title_language": "Lenguage",
+        "language_description": "Select the application language"
+    },
+    "notificationsScreen": {
+        "title": "Notifications",
+        "warning": "Enable permissions to receive notifications.",
+        "description": "Manage the alerts you want to receive.",
+        "offers": "Offers",
+        "events": "Events",
+        "products": "Products"
+    },
+    "preferencesScreen": {
+        "header_title_preferences": "Preferences",
+        "theme_title": "Theme",
+        "theme_description": "Customize the look of the application",
+        "theme_light": "Light",
+        "theme_dark": "Dark"
+    },
+    "reportScreen": {
+        "header_title": "REPORT",
+        "error_complete_fields": "Please complete all required fields.",
+        "help_title": "Need help?",
+        "description": "Complete your report here so we can provide you with personalized attention.",
+        "name_label": "Name:",
+        "name_placeholder": "Enter your name",
+        "lastname_label": "Last Name:",
+        "lastname_placeholder": "Enter your last name",
+        "email_label": "Email:",
+        "email_placeholder": "Enter your email",
+        "problem_label": "Describe your problem below:",
+        "button_send": "SEND",
+        "dialog_title": "REPORT RECEIVED",
+        "dialog_part1": "We will contact you via ",
+        "dialog_part2": ".",
+        "button_ok": "OK"
+    },
+    "customizationScreen": {
+        "title": "Customization",
+        "btn_preferences": "Preferences",
+        "btn_notifications": "Notifications",
+        "btn_language": "Language"
     }
 }

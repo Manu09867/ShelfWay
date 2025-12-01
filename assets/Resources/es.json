@@ -114,7 +114,8 @@
         }
     },
     "offersScreen": {
-        "shelvesWithOffers": "Anaqueles con Ofertas"
+        "shelvesWithOffers": "Anaqueles con Ofertas",
+        "title": "Ofertas por Sección"
     },
     "categories": {
         "dairy": "Lácteos",
@@ -124,7 +125,57 @@
         "drinks": "Bebidas",
         "cleaning": "Limpieza"
     },
-    "languageScreen": {
+    "tab": {
+        "offers": "Ofertas",
+        "map": "Mapa",
+        "settings": "Configuración"
+    },
+    "mapScreen": {
+        "title": "Mapa",
+        "QRerror": "Error al cargar el QR",
+        "QRloaded": "QR cargado correctamente",
+        "noQR": "No se ha proporcionado un QR"
+    },
+    "product": {
+        "title": "Producto",
+        "before": "Antes",
+        "now": "AHORA",
+        "noDescription": "Sin descripción disponible.",
+        "notFound": "No se encontró el producto.",
+        "noName": "Producto"
+    },
+    "configScreen": {
+        "notices": "Avisos",
+        "report": "Reporte",
+        "customization": "Personalización"
+    },
+    "avisosScreen": {
+        "supermarketEvents": "Avisos del Supermercado",
+        "supermarketEventsWithCount": "Avisos del Supermercado",
+        "loadingEvents": "Cargando eventos...",
+        "noActiveEvents": "No hay eventos activos en este momento",
+        "untitledEvent": "Evento sin título",
+        "noDescription": "Descripción no disponible",
+        "viewEvent": "Ver Evento",
+        "unspecifiedDate": "Fecha no especificada"
+    },
+    "eventDetail": {
+        "event": "Evento",
+        "untitledEvent": "Evento sin título",
+        "eventImage": "Imagen del evento",
+        "unspecifiedDate": "Fecha no especificada",
+        "fromDate": "Del",
+        "toDate": "Al",
+        "eventType": "Tipo de Evento",
+        "special": "Especial",
+        "specialEvent": "Evento especial",
+        "storeHours": "Horario normal de tienda",
+        "aboutEvent": "Sobre el Evento",
+        "noDescription": "Descripción no disponible para este evento.",
+        "featuredPromotions": "Promociones Destacadas",
+        "termsAndConditions": "Términos y Condiciones",
+        "termsList": "• Promociones válidas durante las fechas del evento\n• No acumulable con otras promociones\n• Productos sujetos a disponibilidad\n• Precios pueden variar sin previo aviso\n• El supermercado se reserva el derecho de modificar las promociones"
+    ,"languageScreen": {
         "header_title_language": "Idioma",
         "language_description": "Selecciona el idioma de la aplicación"
     },
@@ -167,4 +218,6 @@
         "btn_notifications": "Notificaciones",
         "btn_language": "Idioma"
     }
+}
+    
 }
