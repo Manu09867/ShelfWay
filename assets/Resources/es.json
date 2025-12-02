@@ -133,7 +133,7 @@
   "mapScreen": {
     "title": "Mapa",
     "QRerror": "Error al cargar el QR",
-    "QRloaded": "QR cargado correctamente",
+    "QRloaded": "Presiona el mapa para ver ofertas",
     "noQR": "No se ha proporcionado un QR"
   },
   "product": {

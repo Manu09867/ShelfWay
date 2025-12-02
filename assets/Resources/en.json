@@ -133,7 +133,7 @@
     "mapScreen": {
         "title": "Map",
         "QRerror": "Error loading QR",
-        "QRloaded": "QR successfully loaded",
+        "QRloaded": "Press the map to see new discounts",
         "noQR": "No QR provided"
     },
     "product": {

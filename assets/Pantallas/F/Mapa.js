@@ -24,19 +24,6 @@ const MapaScreen = ({ navigation, route }) => {
 
     const mapUrl = storedMapUrl;
 
-    const [routes] = React.useState([
-        { key: 'ofertas', title: t('mainScreen.bottomNav.offers'), icon: 'tag-outline' },
-        { key: 'mapa', title: t('mainScreen.bottomNav.map'), icon: 'map-marker-outline' },
-        { key: 'config', title: t('mainScreen.bottomNav.settings'), icon: 'cog-outline' },
-    ]);
-
-    const handleTabPress = (routeKey) => {
-        setIndex(routes.findIndex(r => r.key === routeKey));
-        if (routeKey === 'ofertas') navigation.navigate('Ofertas');
-        if (routeKey === 'mapa') navigation.navigate('Mapa');
-        if (routeKey === 'config') navigation.navigate('Config');
-    };
-
     return (
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
 
@@ -91,26 +78,6 @@ const MapaScreen = ({ navigation, route }) => {
                     </Text>
                 )}
             </View>
-
-            {/* Barra inferior */}
-            <BottomNavigation
-                navigationState={{ index, routes }}
-                onIndexChange={setIndex}
-                renderScene={() => null}
-                onTabPress={({ route }) => handleTabPress(route.key)}
-                barStyle={{ backgroundColor: theme.colors.menuBg }}
-                activeColor={theme.colors.btIcon}
-                inactiveColor={theme.colors.btIconIn}
-                style={styles.bottomNav}
-                theme={{ colors: { secondaryContainer: theme.colors.activeT } }}
-                renderIcon={({ route, focused }) => (
-                    <MaterialCommunityIcons
-                        name={route.icon}
-                        size={24}
-                        color={focused ? theme.colors.btIcon : theme.colors.btIconIn}
-                    />
-                )}
-            />
         </View>
     );
 };

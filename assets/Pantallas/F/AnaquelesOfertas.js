@@ -12,22 +12,10 @@ export default function AnaquelesOfertasScreen({ navigation }) {
     const { t } = useTranslation(); // << TRADUCCIÓN
     const [index, setIndex] = React.useState(0);
 
-    const [routes] = React.useState([
-        { key: 'ofertas', title: t('mainScreen.bottomNav.offers'), icon: 'tag-outline' },
-        { key: 'mapa', title: t('mainScreen.bottomNav.map'), icon: 'map-marker-outline' },
-        { key: 'config', title: t('mainScreen.bottomNav.settings'), icon: 'cog-outline' },
-    ]);
-
     const { theme } = useTheme();
     const [secciones, setSecciones] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
 
-    const handleTabPress = (routeKey) => {
-        setIndex(routes.findIndex(r => r.key === routeKey));
-        if (routeKey === 'ofertas') navigation.navigate('Ofertas');
-        if (routeKey === 'mapa') navigation.navigate('Mapa');
-        if (routeKey === 'config') navigation.navigate('Config');
-    };
 
     React.useEffect(() => {
         const fetchOffers = async () => {
@@ -134,24 +122,6 @@ export default function AnaquelesOfertasScreen({ navigation }) {
                 ))}
             </ScrollView>
 
-            <BottomNavigation
-                navigationState={{ index, routes }}
-                onIndexChange={setIndex}
-                renderScene={() => null}
-                onTabPress={({ route }) => handleTabPress(route.key)}
-                barStyle={{ backgroundColor: theme.colors.menuBg }}
-                activeColor={theme.colors.btIcon}
-                inactiveColor={theme.colors.btIconIn}
-                style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}
-                theme={{ colors: { secondaryContainer: theme.colors.activeT } }}
-                renderIcon={({ route, focused }) => (
-                    <MaterialCommunityIcons
-                        name={route.icon}
-                        size={24}
-                        color={focused ? theme.colors.btIcon : theme.colors.btIconIn}
-                    />
-                )}
-            />
         </View>
     );
 }
